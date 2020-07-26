@@ -1,4 +1,4 @@
-package lec.spring.studygroupclone.Model;
+package lec.spring.studygroupclone.Models;
 
 import lombok.*;
 
