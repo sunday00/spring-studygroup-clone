@@ -41,7 +41,7 @@
         </div>
         <div class="row justify-content-center">
             <form class="needs-validation col-sm-6" action="#"
-                  th:action="@{/signup}" th:object="${account}" method="post" novalidate>
+                  th:action="@{/sign-up}" th:object="${account}" method="post" novalidate>
                 <div class="form-group">
                     <label for="nickname">NickName</label>
                     <input id="nickname" type="text" th:field="*{nickname}" class="form-control"
@@ -67,7 +67,7 @@
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input id="password" type="password" th:field="*{password}" class="form-control"
-                           aria-describedby="passwordHelp" required minlength="8" maxlength="50">
+                           aria-describedby="passwordHelp" required minlength="4" maxlength="25">
                     <small id="passwordHelp" class="form-text text-muted p-1">
                         Make password more then 8, less then 50 letters including number, alphabet, any of special character but No whitespace.
                     </small>
