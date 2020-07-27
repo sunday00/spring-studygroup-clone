@@ -4,10 +4,7 @@ import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Repositories.AccountRepository;
 import lec.spring.studygroupclone.Services.AccountService;
 import lec.spring.studygroupclone.helpers.AccountValidator;
-import lec.spring.studygroupclone.helpers.ConsoleMailSender;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -43,5 +40,21 @@ public class AcountController {
         accountService.processSignUp(account);
 
         return "redirect:/";
+    }
+
+    @GetMapping("/check-email-token")
+    public String checkEmailToken(String token, String email, Model model){
+        Account account = accountService.checkEmailToken(token, email);
+        String view = "account/checked-email";
+
+        if( account == null) {
+            model.addAttribute("error", "Email Verification Failed");
+            return view;
+        }
+
+        model.addAttribute("countMember", accountService.count());
+        model.addAttribute("nickname", account.getNickname());
+
+        return view;
     }
 }

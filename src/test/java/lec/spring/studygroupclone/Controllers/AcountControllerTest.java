@@ -1,6 +1,8 @@
 package lec.spring.studygroupclone.Controllers;
 
+import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Repositories.AccountRepository;
+import lec.spring.studygroupclone.config.SecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ class AcountControllerTest {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private SecurityConfig securityConfig;
+
     @MockBean
     JavaMailSender javaMailSender;
 
@@ -54,7 +59,13 @@ class AcountControllerTest {
 //                .andExpect(view().name("account/sign-up"));
                 .andExpect(view().name("redirect:/"));
 
-        assertTrue(accountRepository.existsByEmail("abc@example.com"));
+        Account account = accountRepository.findByEmail("abc@example.com");
+        assertNotNull(account);
+        assertNotNull(account.getEmailCheckToken());
+//        assertTrue(accountRepository.existsByEmail("abc@example.com"));
+        assertTrue( securityConfig.passwordEncoder().matches( "mysecurity123!", account.getPassword() ) );
+        System.out.println(account.getPassword());
+        System.out.println(account.getEmailCheckToken());
         then(javaMailSender).should().send(any(SimpleMailMessage.class));
     }
 }
