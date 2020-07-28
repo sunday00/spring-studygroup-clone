@@ -1,14 +1,17 @@
 package lec.spring.studygroupclone.Services;
 
+import java.util.Collections;
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Repositories.AccountRepository;
 import lec.spring.studygroupclone.config.SecurityConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
 
@@ -25,6 +28,8 @@ public class AccountService {
         Account member = save(account);
         member.generateEmailCheckToken();
         sendSignupConfirmEmail(member);
+
+        this.login(member);
     }
 
     private Account save(Account account) {
@@ -49,10 +54,22 @@ public class AccountService {
         account.setEmailVerified(true);
         account.setJoinedAt(LocalDateTime.now());
 
+        this.login(account);
+
         return account;
     }
 
     public Long count() {
         return accountRepository.count();
+    }
+
+    private void login (Account account) {
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                account.getNickname(),
+                account.getPassword(),
+//                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+        SecurityContextHolder.getContext().setAuthentication(token);
     }
 }
