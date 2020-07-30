@@ -25,6 +25,7 @@ public class AccountService {
     @Transactional
     public void processSignUp(Account account){
         account.setPassword( securityConfig.passwordEncoder().encode(account.getPassword()) );
+        account.setEmailVerified(false);
         Account member = save(account);
         member.generateEmailCheckToken();
         sendSignupConfirmEmail(member);
@@ -65,11 +66,18 @@ public class AccountService {
 
     private void login (Account account) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                account.getNickname(),
+                account, //principal
                 account.getPassword(),
 //                List.of(new SimpleGrantedAuthority("ROLE_USER"))
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
         );
         SecurityContextHolder.getContext().setAuthentication(token);
+    }
+
+    public void resendVerificationToken(Account account) {
+        Account member = accountRepository.findByEmail(account.getEmail());
+        member.generateEmailCheckToken();
+        member = save(member);
+        sendSignupConfirmEmail(member);
     }
 }

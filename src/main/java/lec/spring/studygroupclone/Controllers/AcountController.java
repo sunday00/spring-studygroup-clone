@@ -42,6 +42,20 @@ public class AcountController {
         return "redirect:/";
     }
 
+    @GetMapping("/check-email")
+    public String checkEmail(){
+        String view = "account/check-email";
+        return view;
+    }
+
+    @PostMapping("/resend-verification-token")
+    public String resendVerificationToken(Account account){
+
+        accountService.resendVerificationToken(account);
+
+        return "redirect:/";
+    }
+
     @GetMapping("/check-email-token")
     public String checkEmailToken(String token, String email, Model model){
         Account account = accountService.checkEmailToken(token, email);
