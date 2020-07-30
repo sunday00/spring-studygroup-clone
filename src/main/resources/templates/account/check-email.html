@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragment.html :: head"></head>
+
+<body class="bg-light">
+
+<nav th:replace="fragment.html :: nav"></nav>
+
+<div class="container" sec:authorize="!isAuthenticated()">
+    <h2>DO NOT COME THIS WAY!</h2>
+</div>
+
+<div class="container" sec:authorize="isAuthenticated()">
+    <div class="py-5 text-center">
+        <h2 class="h2">Check Your Email And Click VERIFYING Link To finish the process!</h2>
+        <p class="lead">Then, You are finally our real member!</p>
+        <div class="info text-info">
+            <form action="/resend-verification-token" method="POST">
+                <button class="btn btn-info">RESEND</button>
+            </form>
+        </div>
+        <small class="text-info">The Email is occasionally sent/received very slower then our expected. You are not received our mail in 5 more minutes, resend verifying email.</small>
+    </div>
+</div>
+
+<footer th:replace="fragment.html :: footer"></footer>
+
+<th:block th:replace="fragment.html :: script"></th:block>
+
+</body>
+</html>
