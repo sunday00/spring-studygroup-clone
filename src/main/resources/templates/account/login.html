@@ -8,52 +8,45 @@
 <body class="bg-light">
 
 <nav th:replace="fragment.html :: nav"></nav>
+<p class="alert alert-danger" role="alert" th:if="${error != null}">Can't find match the email or password.</p>
 
 <div class="container">
     <div class="py-5 text-center">
-        <h2>Join The Site!</h2>
+        <h2>LOGIN</h2>
     </div>
     <div class="row justify-content-center">
         <form class="needs-validation col-sm-6" action="#"
-              th:action="@{/sign-up}" th:object="${account}" method="post" novalidate>
-            <div class="form-group">
-                <label for="nickname">NickName</label>
-                <input id="nickname" type="text" th:field="*{nickname}" class="form-control"
-                       placeholder="DarkKnight" aria-describedby="nicknameHelp" required minlength="3" maxlength="20">
-                <small id="nicknameHelp" class="form-text text-muted p-1">
-                    You can make nickname only with more then 3, less then 20 numbers and alphabets. You can modify after register.
-                </small>
-                <small class="invalid-feedback">Input Nick Name</small>
-                <small class="form-text text-danger" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}">Nickname Error</small>
-            </div>
-
+              th:action="@{/login}" th:object="${account}" method="post" novalidate>
             <div class="form-group">
                 <label for="email">Email</label>
                 <input id="email" type="email" th:field="*{email}" class="form-control"
                        placeholder="your@email.com" aria-describedby="emailHelp" required>
-                <small id="emailHelp" class="form-text text-muted p-1">
-                    This site is never expose your email to another one.
-                </small>
                 <small class="invalid-feedback">Input your Email</small>
                 <small class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</small>
             </div>
 
-            <div class="form-group">
+            <div class="form-group mb-4">
                 <label for="password">Password</label>
                 <input id="password" type="password" th:field="*{password}" class="form-control"
                        aria-describedby="passwordHelp" required minlength="4" maxlength="25">
-                <small id="passwordHelp" class="form-text text-muted p-1">
-                    Make password more then 8, less then 50 letters including number, alphabet, any of special character but No whitespace.
-                </small>
-                <small class="invalid-feedback">Don't skip make a password</small>
+                <small class="invalid-feedback">Input your password</small>
                 <small class="form-text text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</small>
             </div>
 
+            <div class="form-group mb-4">
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend input-group-text">
+                        <input type="checkbox" id="remember" />
+                    </div>
+                    <label class="form-control" for="remember">REMEMBER ME</label>
+                </div>
+            </div>
+
             <div class="form-group">
-                <button class="btn btn-primary btn-block" type="submit"
-                        aria-describedby="submitHelp">Be One of Our Members</button>
+                <button class="btn btn-success btn-block" type="submit"
+                        aria-describedby="submitHelp">LOGIN</button>
                 <small id="submitHelp" class="form-text text-muted">
-                    Read <a href="#">Terms and condition</a>, and press above if you are AGREE.
+                    You want login <a href="/login-nopassword">without password</a> or <a href="/find-password">Can't remember your password?</a>
                 </small>
             </div>
         </form>

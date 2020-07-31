@@ -14,16 +14,29 @@
 </div>
 
 <div class="container" sec:authorize="isAuthenticated()">
-    <div class="py-5 text-center">
+    <div class="py-5 text-center" th:if="${error == null}">
         <h2 class="h2">Check Your Email And Click VERIFYING Link To finish the process!</h2>
         <p class="lead">Then, You are finally our real member!</p>
         <div class="info text-info">
             <form th:action="@{/resend-verification-token}" method="POST" th:object="${account}">
                 <input type="hidden" name="email" th:value="${#authentication.getPrincipal().getEmail()}">
-                <button class="btn btn-info" type="submit">RESEND</button>
+                <button class="btn btn-info" type="submit" th:text="'RESEND to '+${#authentication.getPrincipal().getEmail()}"></button>
             </form>
         </div>
-        <small class="text-info">The Email is occasionally sent/received very slower then our expected. You are not received our mail in 5 more minutes, resend verifying email.</small>
+        <small class="text-info">The Email is occasionally sent/received very slower then our expected. You are not received our mail in 10 more minutes, resend verifying email.</small>
+    </div>
+
+    <div class="py-5 text-center" th:if="${error != null}">
+        <h2 class="h2">Sorry</h2>
+        <p class="lead text-danger">You should wait 10 minutes to resend Verification Email.</p>
+        <div class="info text-info lead">
+            Large Amount of sending emails interrupt our process, and someone can't receive our mail ever because the email company recognizes our mail as a spam.
+        </div>
+
+        <div class="info text-info lead">
+            How about check your mail box ( <span th:text="${#authentication.getPrincipal().getEmail()}"></span> ) if the earlier verification email.
+        </div>
+        <small class="text-info">The Email is occasionally sent/received very slower then our expected. You are not received our mail in <span th:text="${#authentication.getPrincipal().getRemainAbleToResendEmailCheckToken()}"></span> more minutes, resend verifying email.</small>
     </div>
 </div>
 

@@ -37,6 +37,8 @@ public class Account {
 
     private String emailCheckToken;
 
+    private LocalDateTime lastEmailCheckTokenCreatedAt;
+
     private LocalDateTime joinedAt;
 
     private String description;
@@ -58,5 +60,14 @@ public class Account {
 
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();
+        this.lastEmailCheckTokenCreatedAt = LocalDateTime.now();
+    }
+
+    public boolean canSendEmailCheckToken(){
+        return this.lastEmailCheckTokenCreatedAt.isBefore(LocalDateTime.now().minusMinutes(10));
+    }
+
+    public int getRemainAbleToResendEmailCheckToken(){
+        return this.lastEmailCheckTokenCreatedAt.plusMinutes(10).getMinute() - LocalDateTime.now().getMinute();
     }
 }

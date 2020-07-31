@@ -18,12 +18,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .mvcMatchers(
-                        "/","/main","/index", "/login", "/sign-up", "/check-email", "/check-email-token",
+                        "/","/main","/index", "/login", "/sign-up", "/check-email-token",
                         "/email-login", "/check-email-login", "/login-link", "/profile/*",
                         "/favicon.ico"
                         ).permitAll().mvcMatchers(
                         HttpMethod.GET, "/profile/*"
                 ).permitAll().anyRequest().authenticated();
+
+//        http.formLogin().loginPage("/login").permitAll();
+        http.logout().logoutSuccessUrl("/");
+
     }
 
     @Override

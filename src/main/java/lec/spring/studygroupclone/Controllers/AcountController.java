@@ -1,7 +1,6 @@
 package lec.spring.studygroupclone.Controllers;
 
 import lec.spring.studygroupclone.Models.Account;
-import lec.spring.studygroupclone.Repositories.AccountRepository;
 import lec.spring.studygroupclone.Services.AccountService;
 import lec.spring.studygroupclone.helpers.AccountValidator;
 import lombok.RequiredArgsConstructor;
@@ -49,11 +48,15 @@ public class AcountController {
     }
 
     @PostMapping("/resend-verification-token")
-    public String resendVerificationToken(Account account){
+    public String resendVerificationToken(Account account, Model model){
 
-        accountService.resendVerificationToken(account);
+        if( accountService.resendVerificationToken(account) ) {
+            return "redirect:/";
+        }
 
-        return "redirect:/";
+        model.addAttribute("error", "wait");
+
+        return "account/check-email";
     }
 
     @GetMapping("/check-email-token")
@@ -70,5 +73,20 @@ public class AcountController {
         model.addAttribute("nickname", account.getNickname());
 
         return view;
+    }
+
+    @GetMapping("/login")
+    public String login(Account account) {
+        return "account/login";
+    }
+
+    @PostMapping("/login")
+    public String signIn(Account account, Model model){
+        if( accountService.signIn(account) ){
+            return "redirect:/";
+        }
+
+        model.addAttribute("error", "wrong");
+        return "account/login";
     }
 }

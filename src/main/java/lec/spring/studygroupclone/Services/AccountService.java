@@ -64,7 +64,7 @@ public class AccountService {
         return accountRepository.count();
     }
 
-    private void login (Account account) {
+    private void login(Account account) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                 account, //principal
                 account.getPassword(),
@@ -74,10 +74,36 @@ public class AccountService {
         SecurityContextHolder.getContext().setAuthentication(token);
     }
 
-    public void resendVerificationToken(Account account) {
+    public boolean resendVerificationToken(Account account) {
         Account member = accountRepository.findByEmail(account.getEmail());
-        member.generateEmailCheckToken();
-        member = save(member);
-        sendSignupConfirmEmail(member);
+        if( member.canSendEmailCheckToken() ) {
+            member.generateEmailCheckToken();
+            member = save(member);
+            sendSignupConfirmEmail(member);
+            return true;
+        }
+        return false;
     }
+
+    public boolean signIn(Account account) {
+        Account target = accountRepository.findByEmail(account.getEmail());
+        if(target == null) return false;
+
+        boolean isUser = securityConfig.passwordEncoder().matches(account.getPassword(), target.getPassword());
+
+        if(isUser) {
+            this.login(target);
+            return true;
+        }
+
+        return false;
+    }
+
+//    implements UserDetailsService
+//    @Override
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        Account account = accountRepository.findByEmail(username);
+//        return new User(account.getEmail(), account.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+//    }
+
 }
