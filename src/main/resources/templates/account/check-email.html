@@ -19,8 +19,8 @@
         <p class="lead">Then, You are finally our real member!</p>
         <div class="info text-info">
             <form th:action="@{/resend-verification-token}" method="POST" th:object="${account}">
-                <input type="hidden" name="email" th:value="${#authentication.getPrincipal().getEmail()}">
-                <button class="btn btn-info" type="submit" th:text="'RESEND to '+${#authentication.getPrincipal().getEmail()}"></button>
+                <input type="hidden" name="email" th:value="${#authentication.getPrincipal().getAccount().getEmail()}">
+                <button class="btn btn-info" type="submit" th:text="'RESEND to '+${#authentication.getPrincipal().getAccount().getEmail()}"></button>
             </form>
         </div>
         <small class="text-info">The Email is occasionally sent/received very slower then our expected. You are not received our mail in 10 more minutes, resend verifying email.</small>
@@ -34,9 +34,9 @@
         </div>
 
         <div class="info text-info lead">
-            How about check your mail box ( <span th:text="${#authentication.getPrincipal().getEmail()}"></span> ) if the earlier verification email.
+            How about check your mail box ( <span th:text="${#authentication.getPrincipal().getAccount().getEmail()}"></span> ) if the earlier verification email.
         </div>
-        <small class="text-info">The Email is occasionally sent/received very slower then our expected. You are not received our mail in <span th:text="${#authentication.getPrincipal().getRemainAbleToResendEmailCheckToken()}"></span> more minutes, resend verifying email.</small>
+        <small class="text-info">The Email is occasionally sent/received very slower then our expected. You are not received our mail in <span th:text="${#authentication.getPrincipal().getAccount().getRemainAbleToResendEmailCheckToken()}"></span> more minutes, resend verifying email.</small>
     </div>
 </div>
 

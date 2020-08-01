@@ -3,13 +3,18 @@ package lec.spring.studygroupclone.Services;
 import java.util.Collections;
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Repositories.AccountRepository;
-import lec.spring.studygroupclone.config.SecurityConfig;
+import lec.spring.studygroupclone.config.AppConfig;
+import lec.spring.studygroupclone.helpers.CurrentAccount;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +22,15 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class AccountService {
+public class AccountService implements UserDetailsService {
+
     private final JavaMailSender javaMailSender;
     private final AccountRepository accountRepository;
-    private final SecurityConfig securityConfig;
+    private final AppConfig appConfig;
 
     @Transactional
     public void processSignUp(Account account){
-        account.setPassword( securityConfig.passwordEncoder().encode(account.getPassword()) );
+        account.setPassword( appConfig.passwordEncoder().encode(account.getPassword()) );
         account.setEmailVerified(false);
         Account member = save(account);
         member.generateEmailCheckToken();
@@ -54,6 +60,7 @@ public class AccountService {
 
         account.setEmailVerified(true);
         account.setJoinedAt(LocalDateTime.now());
+        this.save(account);
 
         this.login(account);
 
@@ -65,8 +72,9 @@ public class AccountService {
     }
 
     private void login(Account account) {
+        CurrentAccount currentAccount = new CurrentAccount(account);
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                account, //principal
+                currentAccount, //principal
                 account.getPassword(),
 //                List.of(new SimpleGrantedAuthority("ROLE_USER"))
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
@@ -85,25 +93,29 @@ public class AccountService {
         return false;
     }
 
-    public boolean signIn(Account account) {
-        Account target = accountRepository.findByEmail(account.getEmail());
-        if(target == null) return false;
+//    public boolean signIn(Account account) {
+//        Account target = accountRepository.findByEmail(account.getEmail());
+//        if(target == null) return false;
+//
+//        boolean isUser = appConfig.passwordEncoder().matches(account.getPassword(), target.getPassword());
+//
+//        if(isUser) {
+//            this.login(target);
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
-        boolean isUser = securityConfig.passwordEncoder().matches(account.getPassword(), target.getPassword());
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Account account = accountRepository.findByEmail(username);
 
-        if(isUser) {
-            this.login(target);
-            return true;
+        if( account == null ){
+            throw new UsernameNotFoundException(username);
         }
 
-        return false;
+        return new CurrentAccount(account);
     }
-
-//    implements UserDetailsService
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        Account account = accountRepository.findByEmail(username);
-//        return new User(account.getEmail(), account.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
-//    }
 
 }

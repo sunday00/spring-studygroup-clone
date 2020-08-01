@@ -2,6 +2,7 @@ package lec.spring.studygroupclone.Controllers;
 
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Repositories.AccountRepository;
+import lec.spring.studygroupclone.config.AppConfig;
 import lec.spring.studygroupclone.config.SecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,9 @@ class AcountControllerTest {
     @Autowired
     private SecurityConfig securityConfig;
 
+    @Autowired
+    private AppConfig appConfig;
+
     @MockBean
     JavaMailSender javaMailSender;
 
@@ -66,7 +70,7 @@ class AcountControllerTest {
         assertNotNull(account);
         assertNotNull(account.getEmailCheckToken());
 //        assertTrue(accountRepository.existsByEmail("abc@example.com"));
-        assertTrue( securityConfig.passwordEncoder().matches( "mysecurity123!", account.getPassword() ) );
+        assertTrue( appConfig.passwordEncoder().matches( "mysecurity123!", account.getPassword() ) );
         System.out.println(account.getPassword());
         System.out.println(account.getEmailCheckToken());
         then(javaMailSender).should().send(any(SimpleMailMessage.class));
@@ -104,7 +108,34 @@ class AcountControllerTest {
                 .andExpect(model().attributeExists("nickname"))
                 .andExpect(model().attributeExists("countMember"))
                 .andExpect(view().name("account/checked-email"))
-                .andExpect(authenticated().withUsername("joker"));
+                .andExpect(authenticated().withAuthenticationPrincipal(account));
+    }
+
+    @Transactional
+    @DisplayName("login Test")
+    @Test
+    void login_and_logout_test() throws Exception{
+        String email = "abc@test.com";
+        String password = "secret123!";
+
+        Account account = Account.builder()
+                .email(email)
+                .nickname("joker")
+                .password(appConfig.passwordEncoder().encode(password))
+                .build();
+        accountRepository.save(account);
+
+        mockMvc.perform(post("/login")
+                .param("email", email)
+                .param("password", password)
+                .with(csrf())
+        ).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/"))
+        .andExpect(authenticated().withAuthenticationPrincipal(account));
+
+        mockMvc.perform(post("/logout").with(csrf()))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/"))
+                .andExpect(unauthenticated());
     }
 
 }

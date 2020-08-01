@@ -8,7 +8,7 @@
 <body class="bg-light">
 
 <nav th:replace="fragment.html :: nav"></nav>
-<p class="alert alert-danger" role="alert" th:if="${error != null}">Can't find match the email or password.</p>
+<p class="alert alert-danger" role="alert" th:if="${param.error != null}">Can't find match the email or password.</p>
 
 <div class="container">
     <div class="py-5 text-center">
@@ -36,9 +36,9 @@
             <div class="form-group mb-4">
                 <div class="input-group mb-2">
                     <div class="input-group-prepend input-group-text">
-                        <input type="checkbox" id="remember" />
+                        <input type="checkbox" id="rememberMe" name="remember-me"/>
                     </div>
-                    <label class="form-control" for="remember">REMEMBER ME</label>
+                    <label class="form-control" for="rememberMe">REMEMBER ME</label>
                 </div>
             </div>
 

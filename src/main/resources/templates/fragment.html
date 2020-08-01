@@ -44,13 +44,13 @@
             <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <svg th:data-jdenticon-value="${#authentication.getPrincipal().getNickname()}" width="24" height="24"></svg>
+                    <svg th:data-jdenticon-value="${#authentication.getPrincipal().getAccount().getNickname()}" width="24" height="24"></svg>
                 </a>
                 <div class="dropdown-menu dropdown-menu-sm-right" aria-labelledby="userDropdown">
                     <h6 class="dropdown-header">
-                        <span th:text="${#authentication.getPrincipal().getNickname()}">Username</span>
+                        <span th:text="${#authentication.getPrincipal().getAccount().getNickname()}">Username</span>
                     </h6>
-                    <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.getPrincipal().getNickname()}}">profile</a>
+                    <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.getPrincipal().getAccount().getNickname()}}">profile</a>
                     <a class="dropdown-item" >studies</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" th:href="@{'/settings/profile'}">configuration</a>
@@ -63,7 +63,7 @@
     </div>
 </nav>
 
-<div class="alert alert-warning" role="alert" sec:authorize="isAuthenticated()" th:if="${#authentication.getPrincipal().isEmailVerified() == false}" th:fragment="needEmailVerified">
+<div class="alert alert-warning" role="alert" sec:authorize="isAuthenticated()" th:if="${#authentication.getPrincipal().getAccount().isEmailVerified() == false}" th:fragment="needEmailVerified">
     You almost finish the process of join our site. But You need to VERIFY your EMAIL. <strong>CHECK YOUR EMAIL AND CLICK VERIFY LINK</strong> to finish the process. <a href="#" th:href="@{/check-email}" class="alert-link text-info">What email?</a>
 </div>
 

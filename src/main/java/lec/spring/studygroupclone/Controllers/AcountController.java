@@ -80,13 +80,13 @@ public class AcountController {
         return "account/login";
     }
 
-    @PostMapping("/login")
-    public String signIn(Account account, Model model){
-        if( accountService.signIn(account) ){
-            return "redirect:/";
-        }
-
-        model.addAttribute("error", "wrong");
-        return "account/login";
-    }
+//    @PostMapping("/login")
+//    public String signIn(Account account, Model model){
+//        if( accountService.signIn(account) ){
+//            return "redirect:/";
+//        }
+//
+//        model.addAttribute("error", "wrong");
+//        return "account/login";
+//    }
 }
