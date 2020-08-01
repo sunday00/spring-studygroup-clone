@@ -118,4 +118,11 @@ public class AccountService implements UserDetailsService {
         return new CurrentAccount(account);
     }
 
+    public Account getAccount(String nickname) {
+        Account user = accountRepository.findByNickname(nickname);
+        if(user == null){
+            throw new IllegalArgumentException("There is no user who has " + nickname + " as a nickName");
+        }
+        return user;
+    }
 }
