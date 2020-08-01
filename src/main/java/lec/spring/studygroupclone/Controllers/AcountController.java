@@ -3,6 +3,7 @@ package lec.spring.studygroupclone.Controllers;
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Services.AccountService;
 import lec.spring.studygroupclone.helpers.AccountValidator;
+import lec.spring.studygroupclone.helpers.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +11,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
@@ -48,7 +50,7 @@ public class AcountController {
     }
 
     @PostMapping("/resend-verification-token")
-    public String resendVerificationToken(Account account, Model model){
+    public String resendVerificationToken(@CurrentUser Account account, Model model){
 
         if( accountService.resendVerificationToken(account) ) {
             return "redirect:/";
@@ -89,4 +91,11 @@ public class AcountController {
 //        model.addAttribute("error", "wrong");
 //        return "account/login";
 //    }
+// security 로 대체 완료
+
+    @GetMapping("/profile/{nickname}")
+    public String profile(@PathVariable String nickname, Model model, @CurrentUser Account account ) {
+
+        return "account/profile";
+    }
 }
