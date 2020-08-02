@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AccountService implements UserDetailsService {
 
@@ -28,15 +29,14 @@ public class AccountService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final AppConfig appConfig;
 
-    @Transactional
     public void processSignUp(Account account){
         account.setPassword( appConfig.passwordEncoder().encode(account.getPassword()) );
         account.setEmailVerified(false);
         Account member = save(account);
-        member.generateEmailCheckToken();
-        sendSignupConfirmEmail(member);
+        account.generateEmailCheckToken();
+        sendSignupConfirmEmail(account);
 
-        this.login(member);
+        this.login(account);
     }
 
     private Account save(Account account) {
@@ -86,7 +86,7 @@ public class AccountService implements UserDetailsService {
         Account member = accountRepository.findByEmail(account.getEmail());
         if( member.canSendEmailCheckToken() ) {
             member.generateEmailCheckToken();
-            member = save(member);
+            member = this.save(member);
             sendSignupConfirmEmail(member);
             return true;
         }
@@ -108,6 +108,7 @@ public class AccountService implements UserDetailsService {
 //    }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountRepository.findByEmail(username);
 
@@ -118,6 +119,7 @@ public class AccountService implements UserDetailsService {
         return new CurrentAccount(account);
     }
 
+    @Transactional(readOnly = true)
     public Account getAccount(String nickname) {
         Account user = accountRepository.findByNickname(nickname);
         if(user == null){

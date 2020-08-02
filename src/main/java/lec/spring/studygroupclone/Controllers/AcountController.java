@@ -92,12 +92,4 @@ public class AcountController {
 //        return "account/login";
 //    }
 // security 로 대체 완료
-
-    @GetMapping("/profile/{nickname}")
-    public String profile(@PathVariable String nickname, Model model, @CurrentUser Account account ) {
-        Account findMember = accountService.getAccount(nickname);
-        model.addAttribute(findMember);
-        model.addAttribute("isYou", findMember.equals(account));
-        return "account/profile";
-    }
 }

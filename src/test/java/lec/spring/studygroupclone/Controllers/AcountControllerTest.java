@@ -108,7 +108,7 @@ class AcountControllerTest {
                 .andExpect(model().attributeExists("nickname"))
                 .andExpect(model().attributeExists("countMember"))
                 .andExpect(view().name("account/checked-email"))
-                .andExpect(authenticated().withAuthenticationPrincipal(account));
+                .andExpect(authenticated().withUsername(account.getEmail()));
     }
 
     @Transactional
@@ -131,7 +131,7 @@ class AcountControllerTest {
                 .with(csrf())
         ).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/"))
-        .andExpect(authenticated().withAuthenticationPrincipal(account));
+        .andExpect(authenticated().withUsername(account.getEmail()));
 
         mockMvc.perform(post("/logout").with(csrf()))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/"))

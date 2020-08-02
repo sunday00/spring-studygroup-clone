@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragment.html :: head"></head>
+
+<body class="bg-light">
+<nav th:replace="fragment.html :: nav"></nav>
+
+<div th:replace="fragment.html :: needEmailVerified"></div>
+
+<div class="container">
+    <div class="row mt-5 justify-content-center">
+        <div class="col-3">
+            <div th:replace="profile/base.html :: settings-menu(currentMenu='profile')"></div>
+        </div>
+        <div class="col-7">
+            <div class="row">
+                <h2 class="col-sm-12" th:text="${account.getNickname()}"></h2>
+            </div>
+            <div class="row mt-3">
+                <form class="col-sm-6 needs-validation" th:action="@{/profile/edit}" th:object="${account}" method="post" novalidate>
+                    <div class="form-group">
+                        <label for="description">Introduce</label>
+                        <input id="description" type="text" th:field="*{description}" class="form-control"
+                               placeholder="introduce briefly" aria-describedby="descriptionHelp" required maxlength="35">
+                        <small id="descriptionHelp" class="form-text text-muted">
+                            Insert comment shorter then 35letters.
+                        </small>
+                        <small class="form-text text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+                            Too long. Dont be over 35 letters.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="website">Website</label>
+                        <input id="website" type="url" th:field="*{website}" class="form-control"
+                               placeholder="http://grayfield.net" aria-describedby="websiteHelp" required>
+                        <small id="websiteHelp" class="form-text text-muted">
+                            Blog, cafe, youtube, instagram or your own website url.
+                        </small>
+                        <small class="form-text text-danger" th:if="${#fields.hasErrors('website')}" th:errors="*{website}">
+                            That is not url.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="job">Job</label>
+                        <input id="job" type="text" th:field="*{job}" class="form-control"
+                               placeholder="developer" aria-describedby="jobHelp" required>
+                        <small id="jobHelp" class="form-text text-muted">
+                            developer, student, designer...
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input id="location" type="text" th:field="*{location}" class="form-control"
+                               placeholder="Su-won, Kyung-gi"
+                               aria-describedby="locationHelp" required>
+                        <small id="locationHelp" class="form-text text-muted">
+                            Area for your convenient to commute.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-block" type="submit"
+                                aria-describedby="submitHelp">Edit</button>
+                    </div>
+                </form>
+
+                <div class="col-sm-6">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="fragment.html :: footer"></footer>
+
+<th:block th:replace="fragment.html :: script"></th:block>
+<th:block th:replace="fragment.html :: formValidationScript"></th:block>
+<script type="application/javascript">
+    (function () {
+        'use strict';
+
+    }());
+</script>
+
+</body>
+</html>

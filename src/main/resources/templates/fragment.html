@@ -50,7 +50,7 @@
                     <h6 class="dropdown-header">
                         <span th:text="${#authentication.getPrincipal().getAccount().getNickname()}">Username</span>
                     </h6>
-                    <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.getPrincipal().getAccount().getNickname()}}">profile</a>
+                    <a class="dropdown-item" th:href="@{'/profile/read/' + ${#authentication.getPrincipal().getAccount().getNickname()}}">profile</a>
                     <a class="dropdown-item" >studies</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" th:href="@{'/settings/profile'}">configuration</a>
