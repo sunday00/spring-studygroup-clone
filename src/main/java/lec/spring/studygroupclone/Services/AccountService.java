@@ -4,14 +4,14 @@ import java.util.Collections;
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Repositories.AccountRepository;
 import lec.spring.studygroupclone.config.AppConfig;
-import lec.spring.studygroupclone.helpers.CurrentAccount;
+import lec.spring.studygroupclone.dataMappers.CurrentAccount;
+import lec.spring.studygroupclone.dataMappers.Profile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -126,5 +126,13 @@ public class AccountService implements UserDetailsService {
             throw new IllegalArgumentException("There is no user who has " + nickname + " as a nickName");
         }
         return user;
+    }
+
+    public void update(Account account, Profile profile) {
+        account.setDescription(profile.getDescription());
+        account.setJob(profile.getJob());
+        account.setWebsite(profile.getWebsite());
+        account.setLocation(profile.getLocation());
+        this.save(account);
     }
 }

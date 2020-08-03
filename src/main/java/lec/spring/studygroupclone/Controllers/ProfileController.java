@@ -2,33 +2,60 @@ package lec.spring.studygroupclone.Controllers;
 
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Services.AccountService;
+import lec.spring.studygroupclone.dataMappers.Profile;
 import lec.spring.studygroupclone.helpers.CurrentUser;
+import lec.spring.studygroupclone.helpers.ProfileValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
 
 @Controller
 @RequiredArgsConstructor
 public class ProfileController {
 
+    private final ProfileValidator profileValidator;
+
     private final AccountService accountService;
+    private final String PROFILE_EDIT_VIEW_NAME = "/profile/edit";
+    private final String PROFILE_READ_VIEW_NAME = "/profile/show";
+
+    @InitBinder("profile")
+    public void initBinder(WebDataBinder webDataBinder){
+        webDataBinder.addValidators(profileValidator);
+    }
 
     @GetMapping("/profile/read/{nickname}")
     public String profile(@PathVariable String nickname, Model model, @CurrentUser Account account ) {
         Account findMember = accountService.getAccount(nickname);
         model.addAttribute(findMember);
         model.addAttribute("isYou", findMember.equals(account));
-        return "profile/show";
+        return PROFILE_READ_VIEW_NAME;
     }
 
-    @GetMapping ("/profile/edit")
+    @GetMapping("/profile/edit")
     public String edit (@CurrentUser Account account, Model model) {
-
-        System.out.println(accountService.getAccount(account.getNickname()).toString());
-
         model.addAttribute(accountService.getAccount(account.getNickname()));
-        return "profile/edit";
+        model.addAttribute(new Profile(account));
+        return PROFILE_EDIT_VIEW_NAME;
+    }
+
+    @PostMapping("/profile/edit")
+    public String update(@CurrentUser Account account, @Valid Profile profile, Errors errors, Model model, RedirectAttributes attributes){
+        if( errors.hasErrors() ){
+            model.addAttribute(account);
+            return PROFILE_EDIT_VIEW_NAME;
+        }
+        accountService.update(account, profile);
+        attributes.addFlashAttribute("info", "Edited successfully");
+        return "redirect:"+PROFILE_EDIT_VIEW_NAME;
     }
 }

@@ -1,4 +1,4 @@
-package lec.spring.studygroupclone.helpers;
+package lec.spring.studygroupclone.dataMappers;
 
 import lec.spring.studygroupclone.Models.Account;
 import lombok.Getter;

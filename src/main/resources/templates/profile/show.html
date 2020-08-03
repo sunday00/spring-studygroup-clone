@@ -44,19 +44,19 @@
                 <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
                     <p th:if="${!#strings.isEmpty(account.getWebsite())}">
                             <span style="font-size: 20px;">
-                                <i class="fa fa-link col-1"></i>
+                                <i class="fas fa-external-link-alt col-1"></i>
                             </span>
-                        <span th:text="${account.getWebsite()}" class="col-11"></span>
+                        <a th:href="${account.getWebsite()}" th:text="${account.getWebsite()}" class="col-11" target="_blank"></a>
                     </p>
                     <p th:if="${!#strings.isEmpty(account.getJob())}">
                             <span style="font-size: 20px;">
-                                <i class="fa fa-briefcase col-1"></i>
+                                <i class="fas fa-briefcase col-1"></i>
                             </span>
                         <span th:text="${account.getJob()}" class="col-9"></span>
                     </p>
                     <p th:if="${!#strings.isEmpty(account.getLocation())}">
                             <span style="font-size: 20px;">
-                                <i class="fa fa-location-arrow col-1"></i>
+                                <i class="fas fa-map-marker-alt col-1"></i>
                             </span>
                         <span th:text="${account.getLocation()}" class="col-9"></span>
                     </p>

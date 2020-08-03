@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
@@ -41,6 +42,7 @@ public class Account {
 
     private LocalDateTime joinedAt;
 
+    @Length(max = 35, message = "Description is too long.")
     private String description;
 
     private String website;

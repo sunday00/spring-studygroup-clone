@@ -21,6 +21,7 @@ public class AccountValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         Account account = (Account) target;
+
         if( accountRepository.existsByEmail(account.getEmail()) ){
             errors.rejectValue("email",
                     "invalid.email",
