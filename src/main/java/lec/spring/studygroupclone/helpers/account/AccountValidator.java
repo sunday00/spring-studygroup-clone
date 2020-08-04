@@ -1,4 +1,4 @@
-package lec.spring.studygroupclone.helpers;
+package lec.spring.studygroupclone.helpers.account;
 
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Repositories.AccountRepository;

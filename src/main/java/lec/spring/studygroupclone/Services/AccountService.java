@@ -27,12 +27,11 @@ public class AccountService implements UserDetailsService {
 
     private final JavaMailSender javaMailSender;
     private final AccountRepository accountRepository;
-    private final AppConfig appConfig;
 
     public void processSignUp(Account account){
-        account.setPassword( appConfig.passwordEncoder().encode(account.getPassword()) );
+        account.setPassword( AppConfig.passwordEncoder().encode(account.getPassword()) );
         account.setEmailVerified(false);
-        Account member = save(account);
+        save(account);
         account.generateEmailCheckToken();
         sendSignupConfirmEmail(account);
 

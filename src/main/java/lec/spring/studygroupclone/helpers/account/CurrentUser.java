@@ -1,4 +1,4 @@
-package lec.spring.studygroupclone.helpers;
+package lec.spring.studygroupclone.helpers.account;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 

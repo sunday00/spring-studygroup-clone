@@ -2,8 +2,8 @@ package lec.spring.studygroupclone.Controllers;
 
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Services.AccountService;
-import lec.spring.studygroupclone.helpers.AccountValidator;
-import lec.spring.studygroupclone.helpers.CurrentUser;
+import lec.spring.studygroupclone.helpers.account.AccountValidator;
+import lec.spring.studygroupclone.helpers.account.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
