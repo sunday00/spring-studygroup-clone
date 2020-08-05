@@ -10,13 +10,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -49,7 +47,9 @@ public class ProfileController {
     }
 
     @PostMapping(PROFILE_EDIT_VIEW_NAME)
-    public String update(@CurrentUser Account account, @Valid Profile profile, Errors errors, Model model, RedirectAttributes attributes){
+    public String update(@CurrentUser Account account, @Valid Profile profile, Errors errors, Model model,
+                         RedirectAttributes attributes){
+
         if( errors.hasErrors() ){
             model.addAttribute(account);
             return PROFILE_EDIT_VIEW_NAME; // 이건 리다이렉트하면 에러 안뜨고 생까버림.

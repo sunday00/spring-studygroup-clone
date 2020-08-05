@@ -132,6 +132,8 @@ public class AccountService implements UserDetailsService {
         account.setJob(profile.getJob());
         account.setWebsite(profile.getWebsite());
         account.setLocation(profile.getLocation());
+        account.setProfileImage(profile.getProfileImage());
+        //TODO:: make file save and return url via ajax
         this.save(account);
     }
 }

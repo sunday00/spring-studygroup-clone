@@ -3,7 +3,11 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="fragment.html :: head"></head>
+<head th:replace="fragment.html :: head(~{ :: .additional })">
+    <th:block class="additional">
+        <link rel="stylesheet" href="/node_modules/cropper/dist/cropper.min.css" />
+    </th:block>
+</head>
 
 <body class="bg-light">
 <nav th:replace="fragment.html :: nav"></nav>
@@ -26,7 +30,7 @@
                 <h2 class="col-sm-12" th:text="${account.getNickname()}"></h2>
             </div>
             <div class="row mt-3">
-                <form class="col-sm-6 needs-validation" th:action="@{/profile/edit}" th:object="${profile}" method="post" novalidate>
+                <form class="col-sm-6 needs-validation" th:action="@{/profile/edit}" th:object="${profile}" method="post" novalidate >
                     <div class="form-group">
                         <label for="description">Introduce</label>
                         <input id="description" type="text" th:field="*{description}" class="form-control"
@@ -71,13 +75,39 @@
                     </div>
 
                     <div class="form-group">
+                        <input id="profileImage" type="hidden" th:field="*{profileImage}" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
                         <button class="btn btn-primary btn-block" type="submit"
                                 aria-describedby="submitHelp">Edit</button>
                     </div>
                 </form>
 
                 <div class="col-sm-6">
-
+                    <div class="card text-center">
+                        <h5 class="card-header">Current Profile</h5>
+                        <div id="current-profile-image" class="mt-3">
+                            <svg th:if="${#strings.isEmpty(profile.profileImage)}" class="rounded mx-auto d-block"
+                                 th:data-jdenticon-value="${account.nickname}" width="125" height="125"></svg>
+                            <img th:if="${!#strings.isEmpty(profile.profileImage)}" class="rounded"
+                                 th:src="${profile.profileImage}"
+                                 width="125" height="125" alt="name" th:alt="${account.nickname}"/>
+                        </div>
+                        <div id="new-profile-image" class="mt-3"></div>
+                        <div class="card-body">
+                            <div class="custom-file text-left">
+                                <input type="file" class="custom-file-input" id="profile-image-file">
+                                <label class="custom-file-label" for="profile-image-file">select image file</label>
+                            </div>
+                            <div id="new-profile-image-control" class="mt-3">
+                                <button class="btn btn-outline-primary btn-block" id="cut-button">CROP</button>
+                                <button class="btn btn-outline-success btn-block" id="confirm-button">DONE</button>
+                                <button class="btn btn-outline-warning btn-block" id="reset-button">CANCEL</button>
+                            </div>
+                            <div id="cropped-new-profile-image" class="mt-3"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -86,13 +116,90 @@
 
 <footer th:replace="fragment.html :: footer"></footer>
 
-<th:block th:replace="fragment.html :: script"></th:block>
+<th:block th:replace="fragment.html :: scripts(~{ :: .additionalS })">
+    <th:block class="additionalS">
+        <script src="/node_modules/cropper/dist/cropper.min.js"></script>
+        <script src="/node_modules/jquery-cropper/dist/jquery-cropper.min.js"></script>
+    </th:block>
+</th:block>
 <th:block th:replace="fragment.html :: formValidationScript"></th:block>
-<script type="application/javascript">
-    (function () {
-        'use strict';
 
-    }());
+<script type="application/javascript">
+    'use strict';
+
+    $(function() {
+        let cropper = '';
+        let $confirmBtn = $("#confirm-button");
+        let $resetBtn = $("#reset-button");
+        let $cutBtn = $("#cut-button");
+        let $newProfileImage = $("#new-profile-image");
+        let $currentProfileImage = $("#current-profile-image");
+        let $resultImage = $("#cropped-new-profile-image");
+        let $profileImage = $("#profileImage");
+
+        $newProfileImage.hide();
+        $cutBtn.hide();
+        $resetBtn.hide();
+        $confirmBtn.hide();
+
+        $("#profile-image-file").change(function(e) {
+            if (e.target.files.length === 1) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    if (e.target.result) {
+                        let img = document.createElement("img");
+                        img.id = 'new-profile';
+                        img.src = e.target.result;
+                        img.width = 250;
+
+                        $newProfileImage.html(img);
+                        $newProfileImage.show();
+                        $currentProfileImage.hide();
+
+                        let $newImage = $(img);
+                        $newImage.cropper({aspectRatio: 1});
+                        cropper = $newImage.data('cropper');
+
+                        $cutBtn.show();
+                        $confirmBtn.hide();
+                        $resetBtn.show();
+                    }
+                };
+
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        $resetBtn.click(function() {
+            $("#profile-image-file").val('');
+            $currentProfileImage.show();
+            $newProfileImage.hide();
+            $resultImage.hide();
+            $resetBtn.hide();
+            $cutBtn.hide();
+            $confirmBtn.hide();
+            $profileImage.val('');
+        });
+
+        $cutBtn.click(function () {
+            let dataUrl = cropper.getCroppedCanvas().toDataURL();
+            let newImage = document.createElement("img");
+            newImage.id = "cropped-new-profile-image";
+            newImage.src = dataUrl;
+            newImage.width = 125;
+            $resultImage.html(newImage);
+            $resultImage.show();
+            $confirmBtn.show();
+
+            $confirmBtn.click(function () {
+                //TODO:: convert blob and make realfile, send via ajax, then receive the url and save;
+                $newProfileImage.html(newImage);
+                $cutBtn.hide();
+                $confirmBtn.hide();
+                $profileImage.val(dataUrl);
+            });
+        });
+    });
 </script>
 
 </body>

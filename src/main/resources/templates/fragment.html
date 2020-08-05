@@ -3,12 +3,13 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:fragment="head">
+<head th:fragment="head(additional)">
     <meta charset="UTF-8">
     <title>Study Group</title>
     <link rel="icon" href="/images/logo_sm.svg">
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <th:block th:replace="${additional}"></th:block>
 </head>
 
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark" th:fragment="nav">
@@ -44,7 +45,9 @@
             <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <svg th:data-jdenticon-value="${#authentication.getPrincipal().getAccount().getNickname()}" width="24" height="24"></svg>
+                    <svg th:if="${#authentication.getPrincipal().getAccount().getProfileImage() == null}" th:data-jdenticon-value="${#authentication.getPrincipal().getAccount().getNickname()}" width="24" height="24"></svg>
+                    <img th:if="${#authentication.getPrincipal().getAccount().getProfileImage() != null}" th:src="${#authentication.getPrincipal().getAccount().getProfileImage()}"
+                         width="24" height="24" class="rounded border"/>
                 </a>
                 <div class="dropdown-menu dropdown-menu-sm-right" aria-labelledby="userDropdown">
                     <h6 class="dropdown-header">
@@ -83,11 +86,13 @@
     </div>
 </footer>
 
-<th:block th:fragment="script">
+<th:block th:fragment="scripts(additionalS)">
     <script src="/node_modules/jquery/dist/jquery.min.js"></script>
     <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
+    <th:block th:replace="${additionalS}"></th:block>
 </th:block>
+
 <script type="application/javascript" th:fragment="formValidationScript">
     (function () {
         'use strict';

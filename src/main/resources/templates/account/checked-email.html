@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="fragment.html :: head"></head>
+<head th:replace="fragment.html :: head(~{  })"></head>
 
 <body class="bg-light">
 
@@ -28,7 +28,7 @@
 
 <footer th:replace="fragment.html :: footer"></footer>
 
-<th:block th:replace="fragment.html :: script"></th:block>
+<th:block th:replace="fragment.html :: scripts(~{  })"></th:block>
 
 </body>
 </html>

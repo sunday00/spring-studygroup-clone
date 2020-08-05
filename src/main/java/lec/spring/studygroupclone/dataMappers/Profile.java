@@ -20,10 +20,13 @@ public class Profile {
 
     private String location;
 
+    private String profileImage;
+
     public Profile(Account account) {
         this.description = account.getDescription();
         this.website = account.getWebsite();
         this.job = account.getJob();
         this.location = account.getLocation();
+        this.profileImage = account.getProfileImage();
     }
 }
