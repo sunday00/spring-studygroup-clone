@@ -13,6 +13,8 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+
 import javax.validation.Valid;
 
 @Controller
@@ -26,12 +28,12 @@ public class ProfileController {
     public static final String PROFILE_READ_VIEW_NAME = "/profile/show";
 
     @InitBinder("profile")
-    public void initBinder(WebDataBinder webDataBinder){
+    public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(profileValidator);
     }
 
     @GetMapping("/profile/read/{nickname}")
-    public String profile(@PathVariable String nickname, Model model, @CurrentUser Account account ) {
+    public String profile(@PathVariable String nickname, Model model, @CurrentUser Account account) {
         Account findMember = accountService.getAccount(nickname);
         model.addAttribute(findMember);
         model.addAttribute("isYou", findMember.equals(account));
@@ -39,7 +41,7 @@ public class ProfileController {
     }
 
     @GetMapping(PROFILE_EDIT_VIEW_NAME)
-    public String edit (@CurrentUser Account account, Model model) {
+    public String edit(@CurrentUser Account account, Model model) {
         model.addAttribute(accountService.getAccount(account.getNickname()));
         model.addAttribute(new Profile(account));
         return PROFILE_EDIT_VIEW_NAME;
@@ -47,7 +49,7 @@ public class ProfileController {
 
     @PostMapping(PROFILE_EDIT_VIEW_NAME)
     public String update(@CurrentUser Account account, @Valid Profile profile, Errors errors, Model model,
-                         RedirectAttributes attributes){
+            RedirectAttributes attributes) throws IOException {
 
         if( errors.hasErrors() ){
             model.addAttribute(account);
