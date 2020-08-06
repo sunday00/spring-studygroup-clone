@@ -27,6 +27,8 @@ public class ProfileController {
     public static final String PROFILE_EDIT_VIEW_NAME = "/profile/edit";
     public static final String PROFILE_READ_VIEW_NAME = "/profile/show";
 
+    public static final String PASSWD_EDIT_VIEW_NAME = "/profile/pswd";
+
     @InitBinder("profile")
     public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(profileValidator);
@@ -58,5 +60,25 @@ public class ProfileController {
         accountService.update(account, profile);
         attributes.addFlashAttribute("info", "Edited successfully");
         return "redirect:"+PROFILE_EDIT_VIEW_NAME;
+    }
+
+    @GetMapping(PASSWD_EDIT_VIEW_NAME)
+    public String password (@CurrentUser Account account, Model model) {
+        model.addAttribute(accountService.getAccount(account.getNickname()));
+        model.addAttribute(new Profile(account));
+        return PASSWD_EDIT_VIEW_NAME;
+    }
+
+    @PostMapping(PASSWD_EDIT_VIEW_NAME)
+    public String updatePassword (@CurrentUser Account account, @Valid Profile profile, Errors errors, Model model,
+                                  RedirectAttributes attributes) {
+        if( errors.hasErrors() ){
+            model.addAttribute(account);
+            return PASSWD_EDIT_VIEW_NAME;
+        }
+
+        accountService.updatePasswd(account, profile);
+        attributes.addFlashAttribute("info", "Edited successfully");
+        return "redirect:"+PASSWD_EDIT_VIEW_NAME;
     }
 }

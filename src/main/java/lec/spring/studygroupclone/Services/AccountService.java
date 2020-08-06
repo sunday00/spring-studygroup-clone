@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Collections;
 
+import lec.spring.studygroupclone.helpers.Converter;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -136,21 +137,18 @@ public class AccountService implements UserDetailsService {
     }
 
     public void update(Account account, Profile profile) throws IOException {
-        String profileImagePath = "/accounts/" + account.getNickname() + ".png";
-
-        String[] str_imgs = profile.getProfileImage().split(",");
-        byte[] img = Base64.getDecoder().decode(str_imgs[1]);
-
-        FileOutputStream fileOutputStream = new FileOutputStream(AppConfig.UPLOAD_PATH + profileImagePath);
-        fileOutputStream.write(img);
-
         account.setDescription(profile.getDescription());
         account.setJob(profile.getJob());
         account.setWebsite(profile.getWebsite());
         account.setLocation(profile.getLocation());
-//        account.setProfileImage(profile.getProfileImage());
 
-        account.setProfileImage("/uploads" + profileImagePath);
+        //        account.setProfileImage(profile.getProfileImage());
+        account.setProfileImage("/uploads" + Converter.b64ToFile(account, profile));
+        this.save(account);
+    }
+
+    public void updatePasswd(Account account, Profile profile) {
+        account.setPassword(AppConfig.passwordEncoder().encode(profile.getNewPassword()));
         this.save(account);
     }
 }

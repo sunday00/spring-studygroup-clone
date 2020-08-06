@@ -22,11 +22,18 @@ public class Profile {
 
     private String profileImage;
 
+    @Length(min = 4, message = "Too short")
+    private String newPassword;
+    private String newPasswordConfirm;
+
     public Profile(Account account) {
         this.description = account.getDescription();
         this.website = account.getWebsite();
         this.job = account.getJob();
         this.location = account.getLocation();
         this.profileImage = account.getProfileImage();
+
+        this.newPassword = null;
+        this.newPasswordConfirm = null;
     }
 }

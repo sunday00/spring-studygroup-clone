@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class AppConfig implements WebMvcConfigurer {
 
-    public final static String UPLOAD_PATH = "/Users/sunday00/IdeaProjects/studygroup-clone/uploads";
+    public final static String UPLOAD_PATH = System.getProperty("user.dir") + "/uploads";
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
