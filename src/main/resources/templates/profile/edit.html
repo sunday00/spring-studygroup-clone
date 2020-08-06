@@ -183,21 +183,42 @@
 
         $cutBtn.click(function () {
             let dataUrl = cropper.getCroppedCanvas().toDataURL();
-            let newImage = document.createElement("img");
-            newImage.id = "cropped-new-profile-image";
-            newImage.src = dataUrl;
-            newImage.width = 125;
-            $resultImage.html(newImage);
-            $resultImage.show();
-            $confirmBtn.show();
 
-            $confirmBtn.click(function () {
-                //TODO:: convert blob and make realfile, send via ajax, then receive the url and save;
-                $newProfileImage.html(newImage);
-                $cutBtn.hide();
-                $confirmBtn.hide();
-                $profileImage.val(dataUrl);
-            });
+            let canvas = document.createElement("canvas");
+            let ctx = canvas.getContext("2d");
+
+            canvas.width = 125;
+            canvas.height = 125;
+
+            let image = new Image();
+            let resampledImage;
+            image.onload = function(e) {
+                ctx.drawImage(image, 
+                    0, 0, image.width, image.height, 
+                    0, 0, canvas.width, canvas.height
+                );
+                resampledImage = new Image();
+                resampledImage.src = canvas.toDataURL();
+
+                let newImage = document.createElement("img");
+                newImage.id = "cropped-new-profile-image";
+                newImage.src = resampledImage.src;
+                newImage.width = 125;
+                $resultImage.html(newImage);
+                $resultImage.show();
+                $confirmBtn.show();
+
+                $confirmBtn.click(function () {
+                    //TODO:: convert blob and make realfile, send via ajax, then receive the url and save;
+                    $newProfileImage.html(newImage);
+                    $cutBtn.hide();
+                    $confirmBtn.hide();
+                    $profileImage.val(newImage.src);
+                });
+            };
+
+            image.src = dataUrl;
+
         });
     });
 </script>
