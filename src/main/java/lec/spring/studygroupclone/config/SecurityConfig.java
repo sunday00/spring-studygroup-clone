@@ -33,6 +33,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(
                         HttpMethod.GET, "/profile/read/*"
                     ).permitAll()
+                .mvcMatchers(
+                        HttpMethod.GET, "/uploads/**"
+                ).permitAll()
                 .anyRequest().authenticated();
 
         http.formLogin().loginPage("/login").usernameParameter("email").permitAll();

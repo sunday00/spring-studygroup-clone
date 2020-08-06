@@ -1,9 +1,10 @@
 package lec.spring.studygroupclone.Services;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Collections;
@@ -25,6 +26,8 @@ import lec.spring.studygroupclone.config.AppConfig;
 import lec.spring.studygroupclone.dataMappers.CurrentAccount;
 import lec.spring.studygroupclone.dataMappers.Profile;
 import lombok.RequiredArgsConstructor;
+
+import javax.imageio.ImageIO;
 
 @Service
 @Transactional
@@ -133,20 +136,21 @@ public class AccountService implements UserDetailsService {
     }
 
     public void update(Account account, Profile profile) throws IOException {
+        String profileImagePath = "/accounts/" + account.getNickname() + ".png";
 
-        // byte[] img = Base64.getDecoder().decode(profile.getProfileImage().getBytes(StandardCharsets.UTF_8));
         String[] str_imgs = profile.getProfileImage().split(",");
         byte[] img = Base64.getDecoder().decode(str_imgs[1]);
-        FileOutputStream fos = new FileOutputStream(new File("/static/images/accounts/"+account.getNickname()+".png")); 
-        fos.write(img);
-        fos.close();
+
+        FileOutputStream fileOutputStream = new FileOutputStream(AppConfig.UPLOAD_PATH + profileImagePath);
+        fileOutputStream.write(img);
 
         account.setDescription(profile.getDescription());
         account.setJob(profile.getJob());
         account.setWebsite(profile.getWebsite());
         account.setLocation(profile.getLocation());
-        account.setProfileImage(profile.getProfileImage());
-        //TODO:: make file save and return url via ajax
+//        account.setProfileImage(profile.getProfileImage());
+
+        account.setProfileImage("/uploads" + profileImagePath);
         this.save(account);
     }
 }
