@@ -54,6 +54,8 @@ public class Account {
     @Lob @Basic(fetch = FetchType.EAGER)
     private String profileImage;
 
+    private boolean emailAlarm;
+
     private boolean studyCreatedAlarm;
 
     private boolean studyJoinAllowAlarm;

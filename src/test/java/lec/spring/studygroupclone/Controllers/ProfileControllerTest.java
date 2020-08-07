@@ -12,7 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 //import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -28,6 +34,7 @@ class ProfileControllerTest {
     AccountRepository accountRepository;
 
     @AfterEach
+    @Transactional
     void afterEach(){
         if( accountRepository.findByNickname("sunday") != null ) accountRepository.deleteByNickname("sunday");
     }
@@ -52,4 +59,25 @@ class ProfileControllerTest {
         .andExpect(redirectedUrl(ProfileController.PROFILE_EDIT_VIEW_NAME))
         .andExpect(flash().attributeExists("info"));
     }
+
+    @DisplayName("modify password test")
+    @WithFakeAccountForTest(email = "abc@example.com")
+    @Test
+    void updatePassword() throws Exception {
+        Account beforeAccount = accountRepository.findByEmail("abc@example.com");
+        assertTrue(AppConfig.passwordEncoder().matches("security", beforeAccount.getPassword()));
+
+        mockMvc.perform(post(ProfileController.PASSWD_EDIT_VIEW_NAME)
+                .param("newPassword", "security2")
+                .param("newPasswordConfirm", "security2")
+                .with(csrf())
+        ).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(ProfileController.PASSWD_EDIT_VIEW_NAME))
+        .andExpect(flash().attributeExists("info"));
+
+        Account afterAccount = accountRepository.findByEmail("abc@example.com");
+        assertFalse(AppConfig.passwordEncoder().matches("security", afterAccount.getPassword()));
+        assertTrue(AppConfig.passwordEncoder().matches("security2", afterAccount.getPassword()));
+    }
+
 }

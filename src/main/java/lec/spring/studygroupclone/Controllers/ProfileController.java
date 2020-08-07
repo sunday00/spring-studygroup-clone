@@ -24,10 +24,10 @@ public class ProfileController {
     private final ProfileValidator profileValidator;
     private final AccountService accountService;
 
-    public static final String PROFILE_EDIT_VIEW_NAME = "/profile/edit";
     public static final String PROFILE_READ_VIEW_NAME = "/profile/show";
-
+    public static final String PROFILE_EDIT_VIEW_NAME = "/profile/edit";
     public static final String PASSWD_EDIT_VIEW_NAME = "/profile/pswd";
+    public static final String NOTIFICATION_EDIT_VIEW_NAME = "/profile/noti";
 
     @InitBinder("profile")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -80,5 +80,25 @@ public class ProfileController {
         accountService.updatePasswd(account, profile);
         attributes.addFlashAttribute("info", "Edited successfully");
         return "redirect:"+PASSWD_EDIT_VIEW_NAME;
+    }
+
+    @GetMapping(NOTIFICATION_EDIT_VIEW_NAME)
+    public String notification (@CurrentUser Account account, Model model) {
+        model.addAttribute(accountService.getAccount(account.getNickname()));
+        model.addAttribute(new Profile(account));
+        return NOTIFICATION_EDIT_VIEW_NAME;
+    }
+
+    @PostMapping(NOTIFICATION_EDIT_VIEW_NAME)
+    public String updateNotification (@CurrentUser Account account, @Valid Profile profile, Errors errors, Model model,
+                                  RedirectAttributes attributes) {
+        if( errors.hasErrors() ){
+            model.addAttribute(account);
+            return NOTIFICATION_EDIT_VIEW_NAME;
+        }
+
+        accountService.updateAlarm(account, profile);
+        attributes.addFlashAttribute("info", "Edited successfully");
+        return "redirect:"+NOTIFICATION_EDIT_VIEW_NAME;
     }
 }

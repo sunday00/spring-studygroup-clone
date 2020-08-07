@@ -2,9 +2,7 @@ package lec.spring.studygroupclone.helpers.account;
 
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Services.AccountService;
-import lec.spring.studygroupclone.config.AppConfig;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,12 +20,13 @@ public class WithFakeAccountForTestFactory implements WithSecurityContextFactory
 
     @Override
     public SecurityContext createSecurityContext(WithFakeAccountForTest fakeAccount) {
+
         String email = fakeAccount.email();
 
         Account account = new Account();
         account.setEmail(email);
         account.setNickname("sunday");
-        account.setPassword(AppConfig.passwordEncoder().encode("security"));
+        account.setPassword("security");
         accountService.processSignUp(account);
 
         System.out.println("====================== create account ========================");

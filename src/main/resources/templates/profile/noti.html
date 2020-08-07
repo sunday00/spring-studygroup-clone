@@ -1,10 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragment.html :: head(~{ :: .additional })">
+    <th:block class="additional">
+        <link rel="stylesheet" href="/node_modules/bootstrap4-toggle/css/bootstrap4-toggle.min.css" />
+        <link rel="stylesheet" href="/style.css">
+    </th:block>
 </head>
-<body>
-$END$
+
+<body class="bg-light">
+<nav th:replace="fragment.html :: nav"></nav>
+
+<div th:replace="fragment.html :: needEmailVerified"></div>
+
+<div class="container">
+    <div class="row mt-5 justify-content-center">
+        <div class="col-3">
+            <div th:replace="profile/base.html :: settings-menu(currentMenu='notification')"></div>
+        </div>
+        <div class="col-7">
+            <div th:if="${info}" class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+                <span th:text="${info}">info</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="row">
+                <h2 class="col-sm-12" th:text="${account.getNickname() + ' - Set Notification'}"></h2>
+            </div>
+            <div class="row mt-3">
+                <form class="needs-validation col-12" action="#"
+                      th:action="@{/profile/noti}" th:object="${profile}" method="post" novalidate>
+
+                    <div class="form-group mb-4">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend input-group-text">
+                                <input type="checkbox" id="emailAlarm" class="checkbox-lg" th:field="*{emailAlarm}" />
+                            </div>
+                            <label class="form-control" for="emailAlarm">Also receive email Alarm.</label>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-light" role="alert">
+                        Set Alarm for <strong>being created</strong> <a href="#" th:href="@{/profile/tags}">Keyword</a> in <a href="#" th:href="@{/profile/locations}">your location</a>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-switch setStudyCreatedAlarm">
+                            <input type="checkbox" th:field="*{studyCreatedAlarm}" data-toggle="toggle" data-size="sm" data-onstyle="info" />
+                        </div>
+                    </div>
+
+                    <div class="alert alert-light" role="alert">
+                        Set Alarm for <strong>result about applying joining study</strong>.
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-switch setStudyJoinAllowAlarm">
+                            <input type="checkbox" th:field="*{studyJoinAllowAlarm}" data-toggle="toggle" data-size="sm" data-onstyle="info" />
+                        </div>
+                    </div>
+
+                    <div class="alert alert-light" role="alert">
+                        Set Alarm for <strong>news about your study</strong>.
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-switch setStudyUpdateAlarm">
+                            <input type="checkbox" th:field="*{studyUpdateAlarm}" data-toggle="toggle" data-size="sm" data-onstyle="info" />
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-5">
+                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">Save</button>
+                    </div>
+                </form>
+
+                <div class="col-sm-6">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="fragment.html :: footer"></footer>
+
+<th:block th:replace="fragment.html :: scripts(~{ :: .additionalS })">
+    <th:block class="additionalS">
+        <script src="/node_modules/bootstrap4-toggle/js/bootstrap4-toggle.min.js"></script>
+    </th:block>
+</th:block>
+<th:block th:replace="fragment.html :: formValidationScript"></th:block>
+
 </body>
 </html>

@@ -151,4 +151,16 @@ public class AccountService implements UserDetailsService {
         account.setPassword(AppConfig.passwordEncoder().encode(profile.getNewPassword()));
         this.save(account);
     }
+
+    public void updateAlarm(Account account, Profile profile) {
+        account.setEmailAlarm(profile.isEmailAlarm());
+        account.setStudyCreatedAlarm(profile.isStudyCreatedAlarm());
+        account.setStudyJoinAllowAlarm(profile.isStudyJoinAllowAlarm());
+        account.setStudyUpdateAlarm(profile.isStudyUpdateAlarm());
+        this.save(account);
+    }
+
+    public void deleteByEmail(String email) {
+        accountRepository.deleteByEmail(email);
+    }
 }

@@ -22,6 +22,11 @@ public class Profile {
 
     private String profileImage;
 
+    private boolean emailAlarm;
+    private boolean studyCreatedAlarm;
+    private boolean studyJoinAllowAlarm;
+    private boolean studyUpdateAlarm;
+
     @Length(min = 4, message = "Too short")
     private String newPassword;
     private String newPasswordConfirm;
@@ -35,5 +40,10 @@ public class Profile {
 
         this.newPassword = null;
         this.newPasswordConfirm = null;
+
+        this.emailAlarm = account.isEmailAlarm();
+        this.studyCreatedAlarm = account.isStudyCreatedAlarm();
+        this.studyJoinAllowAlarm = account.isStudyJoinAllowAlarm();
+        this.studyUpdateAlarm = account.isStudyUpdateAlarm();
     }
 }

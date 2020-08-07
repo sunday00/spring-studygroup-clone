@@ -16,6 +16,7 @@ import java.util.Base64;
 public class Converter {
 
     public static String b64ToFile(Account account, Profile profile) throws IOException{
+        if( profile.getProfileImage() == null ) return null;
         String profileImagePath = "/accounts/" + account.getNickname() + ".png";
 
         String[] str_imgs = profile.getProfileImage().split(",");
