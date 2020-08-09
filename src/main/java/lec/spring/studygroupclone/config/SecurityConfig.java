@@ -28,6 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(
                         "/","/main","/index", "/login", "/sign-up", "/check-email-token",
                         "/email-login", "/check-email-login", "/login-link",
+                        "/login-nopassword",
                         "/favicon.ico"
                         ).permitAll()
                 .mvcMatchers(

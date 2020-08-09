@@ -35,5 +35,12 @@ public class ProfileValidator implements Validator {
                     "password confirmation is not equals to password"
             );
         }
+
+        if( profile.getNickname() != null && accountRepository.findByNickname(profile.getNickname()) != null ){
+            errors.rejectValue("nickname",
+                    "invalid.nickname",
+                    "this nickname is already taken by other"
+            );
+        }
     }
 }

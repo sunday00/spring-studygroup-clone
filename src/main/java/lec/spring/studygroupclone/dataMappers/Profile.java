@@ -6,10 +6,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Pattern;
+
 @Data
 @Getter
 @NoArgsConstructor
 public class Profile {
+
+    @Length(min = 3, max = 20, message = "Then length is not 3~20 letters")
+    @Pattern(regexp = "^[a-zA-Z0-9_-]{3,20}$", message = "Not allowed special characters except underscore(_), and dash(-)")
+    private String nickname;
 
     @Length(max = 35, message = "Too long")
     private String description;
@@ -32,6 +38,8 @@ public class Profile {
     private String newPasswordConfirm;
 
     public Profile(Account account) {
+        this.nickname = account.getNickname();
+
         this.description = account.getDescription();
         this.website = account.getWebsite();
         this.job = account.getJob();

@@ -81,14 +81,15 @@ public class AcountController {
         return "account/login";
     }
 
-//    @PostMapping("/login")
-//    public String signIn(Account account, Model model){
-//        if( accountService.signIn(account) ){
-//            return "redirect:/";
-//        }
-//
-//        model.addAttribute("error", "wrong");
-//        return "account/login";
-//    }
-// security 로 대체 완료
+    @GetMapping("/login-nopassword")
+    public String nopassword(Account account){
+        return "account/nopassword";
+    }
+
+    @PostMapping("/login-nopassword")
+    public String sendTokenForNopassword(Account account){
+        accountService.sendLoginToken(account);
+        return "account/nopassword";
+    }
+
 }

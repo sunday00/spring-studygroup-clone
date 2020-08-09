@@ -1,12 +1,7 @@
 package lec.spring.studygroupclone.Services;
 
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.Collections;
 
 import lec.spring.studygroupclone.helpers.Converter;
@@ -28,8 +23,6 @@ import lec.spring.studygroupclone.config.AppConfig;
 import lec.spring.studygroupclone.dataMappers.CurrentAccount;
 import lec.spring.studygroupclone.dataMappers.Profile;
 import lombok.RequiredArgsConstructor;
-
-import javax.imageio.ImageIO;
 
 @Service
 @Transactional
@@ -86,7 +79,6 @@ public class AccountService implements UserDetailsService {
         CurrentAccount currentAccount = new CurrentAccount(account);
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(currentAccount, // principal
                 account.getPassword(),
-                // List.of(new SimpleGrantedAuthority("ROLE_USER"))
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
         SecurityContextHolder.getContext().setAuthentication(token);
     }
@@ -101,21 +93,6 @@ public class AccountService implements UserDetailsService {
         }
         return false;
     }
-
-    // public boolean signIn(Account account) {
-    // Account target = accountRepository.findByEmail(account.getEmail());
-    // if(target == null) return false;
-    //
-    // boolean isUser = appConfig.passwordEncoder().matches(account.getPassword(),
-    // target.getPassword());
-    //
-    // if(isUser) {
-    // this.login(target);
-    // return true;
-    // }
-    //
-    // return false;
-    // }
 
     @Override
     @Transactional(readOnly = true)
@@ -162,5 +139,14 @@ public class AccountService implements UserDetailsService {
 
     public void deleteByEmail(String email) {
         accountRepository.deleteByEmail(email);
+    }
+
+    public void updateAccount(Account account, Profile profile) {
+        account.setNickname(profile.getNickname());
+        this.save(account);
+    }
+
+    public void sendLoginToken(Account account) {
+
     }
 }

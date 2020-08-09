@@ -45,8 +45,8 @@
             <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <svg th:if="${#authentication.getPrincipal().getAccount().getProfileImage() == null}" th:data-jdenticon-value="${#authentication.getPrincipal().getAccount().getNickname()}" width="24" height="24"></svg>
-                    <img th:if="${#authentication.getPrincipal().getAccount().getProfileImage() != null}" th:src="${#authentication.getPrincipal().getAccount().getProfileImage()}"
+                    <svg th:if="${#authentication.getPrincipal().getAccount().getProfileImage() == null || #authentication.getPrincipal().getAccount().getProfileImage().equals('')}" th:data-jdenticon-value="${#authentication.getPrincipal().getAccount().getNickname()}" width="24" height="24"></svg>
+                    <img th:if="${#authentication.getPrincipal().getAccount().getProfileImage() != null && !#authentication.getPrincipal().getAccount().getProfileImage().equals('')}" th:src="${#authentication.getPrincipal().getAccount().getProfileImage()}"
                          width="24" height="24" class="rounded border"/>
                 </a>
                 <div class="dropdown-menu dropdown-menu-sm-right" aria-labelledby="userDropdown">
