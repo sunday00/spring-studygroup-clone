@@ -57,6 +57,7 @@ public class ProfileController {
             model.addAttribute(account);
             return PROFILE_EDIT_VIEW_NAME; // 이건 리다이렉트하면 에러 안뜨고 생까버림.
         }
+
         accountService.update(account, profile);
         attributes.addFlashAttribute("info", "Edited successfully");
         return "redirect:"+PROFILE_EDIT_VIEW_NAME;

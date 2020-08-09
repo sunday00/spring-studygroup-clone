@@ -10,6 +10,7 @@ import java.util.Base64;
 import java.util.Collections;
 
 import lec.spring.studygroupclone.helpers.Converter;
+import org.modelmapper.ModelMapper;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,6 +38,7 @@ public class AccountService implements UserDetailsService {
 
     private final JavaMailSender javaMailSender;
     private final AccountRepository accountRepository;
+    private final ModelMapper modelMapper;
 
     public void processSignUp(Account account) {
         account.setPassword(AppConfig.passwordEncoder().encode(account.getPassword()));
@@ -137,13 +139,14 @@ public class AccountService implements UserDetailsService {
     }
 
     public void update(Account account, Profile profile) throws IOException {
-        account.setDescription(profile.getDescription());
-        account.setJob(profile.getJob());
-        account.setWebsite(profile.getWebsite());
-        account.setLocation(profile.getLocation());
+        if( Converter.b64ToFile(account, profile) != null ) {
+            account.setProfileImage("/uploads" + Converter.b64ToFile(account, profile));
+        } else {
+            account.setProfileImage(null);
+        }
 
-        //        account.setProfileImage(profile.getProfileImage());
-        account.setProfileImage("/uploads" + Converter.b64ToFile(account, profile));
+        modelMapper.map(profile, account);
+
         this.save(account);
     }
 
@@ -153,10 +156,7 @@ public class AccountService implements UserDetailsService {
     }
 
     public void updateAlarm(Account account, Profile profile) {
-        account.setEmailAlarm(profile.isEmailAlarm());
-        account.setStudyCreatedAlarm(profile.isStudyCreatedAlarm());
-        account.setStudyJoinAllowAlarm(profile.isStudyJoinAllowAlarm());
-        account.setStudyUpdateAlarm(profile.isStudyUpdateAlarm());
+        modelMapper.map(profile, account);
         this.save(account);
     }
 

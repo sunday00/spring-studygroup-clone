@@ -16,10 +16,13 @@ import java.util.Base64;
 public class Converter {
 
     public static String b64ToFile(Account account, Profile profile) throws IOException{
-        if( profile.getProfileImage() == null ) return null;
-        String profileImagePath = "/accounts/" + account.getNickname() + ".png";
+        if( profile.getProfileImage() == null || profile.getProfileImage().equals("") ) return null;
 
+        String profileImagePath = "/accounts/" + account.getNickname() + ".png";
         String[] str_imgs = profile.getProfileImage().split(",");
+
+        if( !str_imgs[0].equals("data:image/png;base64") ) return profileImagePath;
+
         byte[] img = Base64.getDecoder().decode(str_imgs[1]);
 
         FileOutputStream fileOutputStream = new FileOutputStream(AppConfig.UPLOAD_PATH + profileImagePath);
