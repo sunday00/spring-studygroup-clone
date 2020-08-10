@@ -5,7 +5,6 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
@@ -67,8 +66,12 @@ public class Account {
         this.lastEmailCheckTokenCreatedAt = LocalDateTime.now();
     }
 
-    public boolean canSendEmailCheckToken(){
-        return this.lastEmailCheckTokenCreatedAt.isBefore(LocalDateTime.now().minusMinutes(10));
+    public boolean canSendEmailCheckToken(String active){
+        int waitMin = 10;
+        if( active.equals("local") ){
+            waitMin = 1;
+        }
+        return this.lastEmailCheckTokenCreatedAt.isBefore(LocalDateTime.now().minusMinutes(waitMin));
     }
 
     public int getRemainAbleToResendEmailCheckToken(){

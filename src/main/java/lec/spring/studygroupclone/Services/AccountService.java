@@ -1,13 +1,13 @@
 package lec.spring.studygroupclone.Services;
 
 import java.io.*;
-import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 
 import lec.spring.studygroupclone.helpers.Converter;
+import lec.spring.studygroupclone.helpers.account.SendEmail;
 import org.modelmapper.ModelMapper;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,69 +29,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AccountService implements UserDetailsService {
 
-    private final JavaMailSender javaMailSender;
+    //depend other class
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper;
+    private final SendEmail sendEmail;
 
-    public void processSignUp(Account account) {
-        account.setPassword(AppConfig.passwordEncoder().encode(account.getPassword()));
-        account.setEmailVerified(false);
-        save(account);
-        account.generateEmailCheckToken();
-        sendSignupConfirmEmail(account);
+    @Value("${spring.profiles.active}")
+    private String active;
 
-        this.login(account);
-    }
-
-    private Account save(Account account) {
-        return accountRepository.save(account);
-    }
-
-    private void sendSignupConfirmEmail(Account member) {
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(member.getEmail());
-        simpleMailMessage.setSubject("STUDY GROUP SITE JOINED");
-        simpleMailMessage.setText(
-                "/check-email-token?" + "token=" + member.getEmailCheckToken() + "&" + "email=" + member.getEmail());
-
-        javaMailSender.send(simpleMailMessage);
-    }
-
-    public Account checkEmailToken(String token, String email) {
-        Account account = accountRepository.findByEmail(email);
-        if (account == null || !account.getEmailCheckToken().equals(token))
-            return null;
-
-        account.setEmailVerified(true);
-        account.setJoinedAt(LocalDateTime.now());
-        this.save(account);
-
-        this.login(account);
-
-        return account;
-    }
-
+    // convenient query
     public Long count() {
         return accountRepository.count();
     }
-
-    private void login(Account account) {
-        CurrentAccount currentAccount = new CurrentAccount(account);
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(currentAccount, // principal
-                account.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
-        SecurityContextHolder.getContext().setAuthentication(token);
-    }
-
-    public boolean resendVerificationToken(Account account) {
-        Account member = accountRepository.findByEmail(account.getEmail());
-        if (member.canSendEmailCheckToken()) {
-            member.generateEmailCheckToken();
-            member = this.save(member);
-            sendSignupConfirmEmail(member);
-            return true;
-        }
-        return false;
+    public void deleteByEmail(String email) {
+        accountRepository.deleteByEmail(email);
     }
 
     @Override
@@ -115,6 +66,51 @@ public class AccountService implements UserDetailsService {
         return user;
     }
 
+    @Transactional(readOnly = true)
+    public Account getAccountByEmail(String email) {
+        Account user = accountRepository.findByEmail(email);
+        if (user == null) {
+            throw new IllegalArgumentException("There is no user who has " + email + " as a email");
+        }
+        return user;
+    }
+
+
+    //signup and email token
+    public void processSignUp(Account account) {
+        account.setPassword(AppConfig.passwordEncoder().encode(account.getPassword()));
+        account.setEmailVerified(false);
+        accountRepository.save(account);
+        account.generateEmailCheckToken();
+        sendEmail.sendSignupConfirmEmail(account);
+
+        this.login(account);
+    }
+
+    public Account checkEmailToken(String token, String email) {
+        Account account = sendEmail.checkEmailToken(token, email);
+        if( account == null ) return null;
+
+        this.login(account);
+
+        return account;
+    }
+
+    public boolean resendVerificationToken(Account account) {
+        return sendEmail.resendVerificationToken(account, active);
+    }
+
+
+    // login
+    private void login(Account account) {
+        CurrentAccount currentAccount = new CurrentAccount(account);
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(currentAccount, // principal
+                account.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+        SecurityContextHolder.getContext().setAuthentication(token);
+    }
+
+    // update profile(address, description, profile image), password, notification
     public void update(Account account, Profile profile) throws IOException {
         if( Converter.b64ToFile(account, profile) != null ) {
             account.setProfileImage("/uploads" + Converter.b64ToFile(account, profile));
@@ -124,29 +120,42 @@ public class AccountService implements UserDetailsService {
 
         modelMapper.map(profile, account);
 
-        this.save(account);
+        accountRepository.save(account);
     }
 
     public void updatePasswd(Account account, Profile profile) {
         account.setPassword(AppConfig.passwordEncoder().encode(profile.getNewPassword()));
-        this.save(account);
+        accountRepository.save(account);
     }
 
     public void updateAlarm(Account account, Profile profile) {
         modelMapper.map(profile, account);
-        this.save(account);
-    }
-
-    public void deleteByEmail(String email) {
-        accountRepository.deleteByEmail(email);
+        accountRepository.save(account);
     }
 
     public void updateAccount(Account account, Profile profile) {
         account.setNickname(profile.getNickname());
-        this.save(account);
+        accountRepository.save(account);
     }
 
-    public void sendLoginToken(Account account) {
+    // forget password
+    public HashMap<String, String> sendLoginToken(Account account) {
+        HashMap<String, String> result = new HashMap<>();
 
+        Account member = accountRepository.findByEmail(account.getEmail());
+
+        if( member == null ){
+            result.put("error", "Not found user. Register first.");
+            return result;
+        }
+
+        if( !this.resendVerificationToken(member) ) {
+            result.put("error", "You should wait " + member.getRemainAbleToResendEmailCheckToken() + " minutes to resend Verification Email.");
+            return result;
+        }
+
+        result.put("info", "Sent login token. Check your email box.");
+
+        return result;
     }
 }
