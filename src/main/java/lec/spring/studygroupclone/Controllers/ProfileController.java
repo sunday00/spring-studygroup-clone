@@ -28,6 +28,7 @@ public class ProfileController {
     public static final String PROFILE_EDIT_VIEW_NAME = "/profile/edit";
     public static final String PASSWD_EDIT_VIEW_NAME = "/profile/pswd";
     public static final String NOTIFICATION_EDIT_VIEW_NAME = "/profile/noti";
+    public static final String TAG_EDIT_VIEW_NAME = "/profile/tags";
     public static final String ACCOUNT_EDIT_VIEW_NAME = "/profile/account";
 
     @InitBinder("profile")
@@ -103,6 +104,13 @@ public class ProfileController {
         accountService.updateAlarm(account, profile);
         attributes.addFlashAttribute("info", "Edited successfully");
         return "redirect:"+NOTIFICATION_EDIT_VIEW_NAME;
+    }
+
+    @GetMapping(TAG_EDIT_VIEW_NAME)
+    public String updateTag(@CurrentUser Account account, Model model){
+        model.addAttribute(accountService.getAccount(account.getNickname()));
+        model.addAttribute(new Profile(account));
+        return TAG_EDIT_VIEW_NAME;
     }
 
     @GetMapping(ACCOUNT_EDIT_VIEW_NAME)
