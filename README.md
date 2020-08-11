@@ -2,4 +2,4 @@
 
 - inflearn spring study group clone coding. just for a lecture. 
 
-- account and profile.
+
