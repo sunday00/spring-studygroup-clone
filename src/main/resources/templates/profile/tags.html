@@ -36,7 +36,8 @@
                         <div class="alert alert-info" role="alert">
                             Inputs some tags related studyGroup that you want to join. Input some text and press 'Return(Enter)' or 'Comma(,)'.
                         </div>
-                        <input id="tags" type="text" name="tags" class="tagify-outside" aria-describedby="tagHelp"/>
+                        <input id="tags" type="text" name="tags" class="tagify-outside" aria-describedby="tagHelp"
+                               th:value="${#strings.listJoin(account.getTagList(), ',')}" />
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -52,6 +53,13 @@
 <th:block th:replace="fragment.html :: scripts(~{ :: .additionalS })">
     <th:block class="additionalS">
         <script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
+        <script th:inline="javascript">
+            $(function(){
+                $(document).ajaxSend(function (e, xhr, option) {
+                    xhr.setRequestHeader(/*[[${_csrf.headerName}]]*/null, /*[[${_csrf.token}]]*/null);
+                });
+            });
+        </script>
         <script>
             $(function(){
                 function tagRequest(url, tagTitle){
@@ -62,9 +70,9 @@
                             rightKey: true
                         },
                         contentType: "application/json; charset:utf-8",
-                        method: "POST",
+                        method: url === "add" ? "POST" : "DELETE",
                         url: `/profile/tags/${url}`,
-                        data: JSON.stringify({'tagTitle' : tagTitle})
+                        data: JSON.stringify({'title' : tagTitle})
                     }).done(function (data, status){
                         console.log(`${data} and status is ${status}`);
                     });

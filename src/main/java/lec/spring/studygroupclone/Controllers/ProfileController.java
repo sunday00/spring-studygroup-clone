@@ -1,11 +1,14 @@
 package lec.spring.studygroupclone.Controllers;
 
 import lec.spring.studygroupclone.Models.Account;
+import lec.spring.studygroupclone.Models.Tag;
 import lec.spring.studygroupclone.Services.AccountService;
+import lec.spring.studygroupclone.Services.TagService;
 import lec.spring.studygroupclone.dataMappers.Profile;
 import lec.spring.studygroupclone.helpers.account.CurrentUser;
 import lec.spring.studygroupclone.helpers.account.ProfileValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -23,6 +26,7 @@ public class ProfileController {
 
     private final ProfileValidator profileValidator;
     private final AccountService accountService;
+    private final TagService tagService;
 
     public static final String PROFILE_READ_VIEW_NAME = "/profile/show";
     public static final String PROFILE_EDIT_VIEW_NAME = "/profile/edit";
@@ -38,10 +42,14 @@ public class ProfileController {
 
     @GetMapping("/profile/read/{nickname}")
     public String profile(@PathVariable String nickname, Model model, @CurrentUser Account account) {
-        Account findMember = accountService.getAccount(nickname);
-        model.addAttribute(findMember);
-        model.addAttribute("isYou", findMember.equals(account));
-
+        Account findMember;
+        try{
+            findMember = accountService.getAccount(nickname);
+            model.addAttribute(findMember);
+            model.addAttribute("isYou", findMember.equals(account));
+        } catch (IllegalArgumentException exception){
+          model.addAttribute("error", nickname + " is not a member");
+        }
         return PROFILE_READ_VIEW_NAME;
     }
 
@@ -107,10 +115,27 @@ public class ProfileController {
     }
 
     @GetMapping(TAG_EDIT_VIEW_NAME)
-    public String updateTag(@CurrentUser Account account, Model model){
-        model.addAttribute(accountService.getAccount(account.getNickname()));
+    public String editTag(@CurrentUser Account account, Model model){
+        Account member = accountService.getAccount(account.getNickname());
+        model.addAttribute("account", member);
         model.addAttribute(new Profile(account));
         return TAG_EDIT_VIEW_NAME;
+    }
+
+    @PostMapping(TAG_EDIT_VIEW_NAME + "/add")
+    @ResponseBody
+    public ResponseEntity updateTag(@CurrentUser Account account, @RequestBody Tag tag){
+        Tag resultTag = tagService.addTag(tag);
+        accountService.updateTag(account, resultTag);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping(TAG_EDIT_VIEW_NAME + "/remove")
+    @ResponseBody
+    public ResponseEntity deleteTag(@CurrentUser Account account, @RequestBody Tag tag){
+        Tag resultTag = tagService.findByTitle(tag);
+        accountService.removeTag(account, resultTag);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(ACCOUNT_EDIT_VIEW_NAME)

@@ -8,8 +8,11 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter @Setter @EqualsAndHashCode(of="id")
@@ -63,6 +66,13 @@ public class Account {
 
     @ManyToMany
     private Set<Tag> tags;
+
+    public List<String> getTagList(){
+        if( this.getTags().size() == 0 ){
+            return new ArrayList<>();
+        }
+        return this.getTags().stream().map(Tag::getTitle).collect(Collectors.toList());
+    }
 
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();

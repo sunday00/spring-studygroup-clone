@@ -3,7 +3,9 @@ package lec.spring.studygroupclone.Services;
 import java.io.*;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Optional;
 
+import lec.spring.studygroupclone.Models.Tag;
 import lec.spring.studygroupclone.helpers.Converter;
 import lec.spring.studygroupclone.helpers.account.SendEmail;
 import org.modelmapper.ModelMapper;
@@ -131,6 +133,16 @@ public class AccountService implements UserDetailsService {
     public void updateAlarm(Account account, Profile profile) {
         modelMapper.map(profile, account);
         accountRepository.save(account);
+    }
+
+    public void updateTag(Account account, Tag tag) {
+        Optional<Account> member = accountRepository.findById(account.getId());
+        member.ifPresent(m -> m.getTags().add(tag));
+    }
+
+    public void removeTag(Account account, Tag tag) {
+        Optional<Account> member = accountRepository.findById(account.getId());
+        member.ifPresent(m -> m.getTags().remove(tag));
     }
 
     public void updateAccount(Account account, Profile profile) {
