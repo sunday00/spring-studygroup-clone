@@ -6,7 +6,7 @@
 <head th:replace="fragment.html :: head(~{ :: .additional })">
     <th:block class="additional">
         <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css">
-        <style> .tagify-outside{ border: 0; padding: 0; margin: 0; } </style>
+        <style> .tagify__input{ margin:0; } .tagify-outside{ border: 0; padding: 0; margin: 0; } </style>
     </th:block>
 </head>
 
@@ -54,6 +54,7 @@
     <th:block class="additionalS">
         <script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
         <script th:inline="javascript">
+            let allTags = /*[[${allTags}]]*/ null;
             $(function(){
                 $(document).ajaxSend(function (e, xhr, option) {
                     xhr.setRequestHeader(/*[[${_csrf.headerName}]]*/null, /*[[${_csrf.token}]]*/null);
@@ -88,8 +89,10 @@
 
                 let tagify = new Tagify( document.querySelector('#tags'), {
                     pattern: /^.{0,20}$/,
+                    whitelist: JSON.parse(allTags),
                     dropdown: {
-                        enable: 1
+                        enabled: 1,
+                        position: "text"
                     }
                 });
 

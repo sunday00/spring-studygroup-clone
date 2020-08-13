@@ -1,5 +1,7 @@
 package lec.spring.studygroupclone.Controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Models.Tag;
 import lec.spring.studygroupclone.Services.AccountService;
@@ -27,6 +29,7 @@ public class ProfileController {
     private final ProfileValidator profileValidator;
     private final AccountService accountService;
     private final TagService tagService;
+    private final ObjectMapper objectMapper;
 
     public static final String PROFILE_READ_VIEW_NAME = "/profile/show";
     public static final String PROFILE_EDIT_VIEW_NAME = "/profile/edit";
@@ -115,10 +118,11 @@ public class ProfileController {
     }
 
     @GetMapping(TAG_EDIT_VIEW_NAME)
-    public String editTag(@CurrentUser Account account, Model model){
+    public String editTag(@CurrentUser Account account, Model model) throws JsonProcessingException {
         Account member = accountService.getAccount(account.getNickname());
         model.addAttribute("account", member);
         model.addAttribute(new Profile(account));
+        model.addAttribute("allTags", objectMapper.writeValueAsString(tagService.getAllTags()));
         return TAG_EDIT_VIEW_NAME;
     }
 
