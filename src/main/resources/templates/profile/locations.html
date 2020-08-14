@@ -18,7 +18,7 @@
 <div class="container">
     <div class="row mt-5 justify-content-center">
         <div class="col-3">
-            <div th:replace="profile/base.html :: settings-menu(currentMenu='tags')"></div>
+            <div th:replace="profile/base.html :: settings-menu(currentMenu='locations')"></div>
         </div>
         <div class="col-7">
             <div th:if="${info}" class="alert alert-info alert-dismissible fade show mt-3" role="alert">
@@ -28,16 +28,16 @@
                 </button>
             </div>
             <div class="row">
-                <h2 class="col-sm-12" th:text="${account.getNickname() + ' - Interesting'}"></h2>
+                <h2 class="col-sm-12" th:text="${account.getNickname() + ' - Area'}"></h2>
             </div>
             <div class="row mt-3">
                 <div class="row">
                     <div class="col-12">
                         <div class="alert alert-info" role="alert">
-                            Inputs some tags related studyGroup that you want to join. Input some text and press 'Return(Enter)' or 'Comma(,)'.
+                            Inputs some area that you able to join studyGroup and do activity. Input some text and press 'Return(Enter)' or 'Comma(,)' or Select in the list.
                         </div>
-                        <input id="tags" type="text" name="tags" class="tagify-outside" aria-describedby="tagHelp"
-                               th:value="${#strings.listJoin(account.getTagList(), ',')}" />
+                        <input id="tags" type="text" name="locations" class="tagify-outside" aria-describedby="locationHelp"
+                               th:value="${#strings.listJoin(account.getLocationList(), ',')}" />
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -54,12 +54,12 @@
     <th:block class="additionalS">
         <script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
         <script th:inline="javascript">
-            let allTags = /*[[${allTags}]]*/ null;
+            let allLocations = /*[[${allLocations}]]*/ null;
         </script>
         <script th:replace="fragment.html :: ajaxCsrf"></script>
         <script>
             $(function(){
-                function tagRequest(url, tagTitle){
+                function tagRequest(url, locationName){
                     $.ajax({
                         dataType: "json",
                         autoComplete: {
@@ -68,24 +68,25 @@
                         },
                         contentType: "application/json; charset:utf-8",
                         method: url === "add" ? "POST" : "DELETE",
-                        url: `/profile/tags/${url}`,
-                        data: JSON.stringify({'title' : tagTitle})
+                        url: `/profile/locations/${url}`,
+                        data: JSON.stringify({'city' : locationName})
                     }).done(function (data, status){
                         console.log(`${data} and status is ${status}`);
                     });
                 }
 
                 function onAdd(e){
-                    tagRequest("add", e.detail.data.value);
+                    tagRequest("add", e.detail.data.value.split("(")[0]);
                 }
 
                 function onRemove(e){
-                    tagRequest("remove", e.detail.data.value);
+                    tagRequest("remove", e.detail.data.value.split("(")[0]);
                 }
 
                 let tagify = new Tagify( document.querySelector('#tags'), {
-                    pattern: /^.{0,20}$/,
-                    whitelist: JSON.parse(allTags),
+                    // pattern: /^.{0,40}$/,
+                    pattern: /^[A-Za-z]{1,20}\([ㄱ-ㅎ가-힣]{2,20}\)\/[a-zA-Z]{1,30}$/,
+                    whitelist: JSON.parse(allLocations),
                     dropdown: {
                         enabled: 1,
                         position: "text"

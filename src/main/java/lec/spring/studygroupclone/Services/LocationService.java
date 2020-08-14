@@ -1,6 +1,7 @@
 package lec.spring.studygroupclone.Services;
 
 import lec.spring.studygroupclone.Models.Location;
+import lec.spring.studygroupclone.Models.Tag;
 import lec.spring.studygroupclone.Repositories.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
@@ -12,6 +13,8 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,5 +35,15 @@ public class LocationService {
                     }).collect(Collectors.toList());
             locationRepository.saveAll(list);
         }
+    }
+
+    public List<String> getAllLocations() {
+        List<Location> list = locationRepository.findAll();
+        if( list.size() == 0 ) return new ArrayList<String>(Collections.singletonList(""));
+        return list.stream().map(Location::toString).collect(Collectors.toList());
+    }
+
+    public Location findByCity(Location location) {
+        return locationRepository.findByCity(location.getCity());
     }
 }

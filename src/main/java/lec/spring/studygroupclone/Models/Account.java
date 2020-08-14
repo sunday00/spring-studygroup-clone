@@ -8,10 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -65,13 +62,23 @@ public class Account {
     private boolean studyUpdateAlarm;
 
     @ManyToMany
-    private Set<Tag> tags;
+    private Set<Tag> tags = new HashSet<>();
 
     public List<String> getTagList(){
         if( this.getTags().size() == 0 ){
             return new ArrayList<>();
         }
         return this.getTags().stream().map(Tag::getTitle).collect(Collectors.toList());
+    }
+
+    @ManyToMany
+    private Set<Location> locations = new HashSet<>();
+
+    public List<String> getLocationList(){
+        if( this.getLocations().size() == 0 ){
+            return new ArrayList<>();
+        }
+        return this.getLocations().stream().map(Location::toString).collect(Collectors.toList());
     }
 
     public void generateEmailCheckToken() {

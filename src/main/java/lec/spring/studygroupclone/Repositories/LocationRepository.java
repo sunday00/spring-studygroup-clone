@@ -8,4 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public interface LocationRepository extends JpaRepository<Location, Long> {
+
+    @Transactional(readOnly = true)
+    Location findByCity(String city);
 }

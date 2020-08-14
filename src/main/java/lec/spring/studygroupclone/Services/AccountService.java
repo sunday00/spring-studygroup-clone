@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
 
+import lec.spring.studygroupclone.Models.Location;
 import lec.spring.studygroupclone.Models.Tag;
 import lec.spring.studygroupclone.helpers.Converter;
 import lec.spring.studygroupclone.helpers.account.SendEmail;
@@ -143,6 +144,16 @@ public class AccountService implements UserDetailsService {
     public void removeTag(Account account, Tag tag) {
         Optional<Account> member = accountRepository.findById(account.getId());
         member.ifPresent(m -> m.getTags().remove(tag));
+    }
+
+    public void updateLocation(Account account, Location location) {
+        Optional<Account> member = accountRepository.findById(account.getId());
+        member.ifPresent(m -> m.getLocations().add(location));
+    }
+
+    public void removeLocation(Account account, Location location) {
+        Optional<Account> member = accountRepository.findById(account.getId());
+        member.ifPresent(m -> m.getLocations().remove(location));
     }
 
     public void updateAccount(Account account, Profile profile) {

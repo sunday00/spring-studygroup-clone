@@ -93,6 +93,18 @@
     <th:block th:replace="${additionalS}"></th:block>
 </th:block>
 
+<script type="application/javascript" th:inline="javascript" th:fragment="ajaxCsrf">
+    (function () {
+        'use strict';
+
+        $(function(){
+            $(document).ajaxSend(function (e, xhr, option) {
+                xhr.setRequestHeader(/*[[${_csrf.headerName}]]*/null, /*[[${_csrf.token}]]*/null);
+            });
+        });
+    }());
+</script>
+
 <script type="application/javascript" th:fragment="formValidationScript">
     (function () {
         'use strict';

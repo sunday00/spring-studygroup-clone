@@ -24,4 +24,9 @@ public class Location {
     @Column(nullable = true)
     private String province;
 
+    @Override
+    public String toString() {
+        if( this.province != null ) return String.format("%s(%s)/%s", this.city, this.localName, this.province);
+        else return String.format("%s(%s)", this.city, this.localName);
+    }
 }

@@ -2,8 +2,10 @@ package lec.spring.studygroupclone.Controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lec.spring.studygroupclone.Models.Account;
+import lec.spring.studygroupclone.Models.Location;
 import lec.spring.studygroupclone.Models.Tag;
 import lec.spring.studygroupclone.Repositories.AccountRepository;
+import lec.spring.studygroupclone.Repositories.LocationRepository;
 import lec.spring.studygroupclone.Repositories.TagRepository;
 import lec.spring.studygroupclone.config.AppConfig;
 import lec.spring.studygroupclone.helpers.account.WithFakeAccountForTest;
@@ -34,6 +36,9 @@ class ProfileControllerTest {
 
     @Autowired
     TagRepository tagRepository;
+
+    @Autowired
+    LocationRepository locationRepository;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -138,6 +143,72 @@ class ProfileControllerTest {
         Tag resultTag = tagRepository.findByTitle(tag.getTitle());
         assertNotNull(resultTag);
         assertFalse(accountRepository.findByEmail("abc@example.com").getTags().contains(resultTag));
+    }
+
+    @DisplayName("show location form")
+    @WithFakeAccountForTest(email = "abc@example.com")
+    @Test
+    void showLocationForm () throws Exception {
+        Account account = accountRepository.findByEmail("abc@example.com");
+        Location location = new Location();
+        location.setCity("Example");
+        location.setLocalName("예시");
+        location.setProvince("SouthExample");
+        locationRepository.save(location);
+
+        mockMvc.perform(get(ProfileController.LOCATION_EDIT_VIEW_NAME))
+                .andExpect(view().name(ProfileController.LOCATION_EDIT_VIEW_NAME))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("allLocations"))
+                .andExpect(model().attribute("account", account))
+        ;
+
+        locationRepository.deleteAll();
+    }
+
+    @DisplayName("add location")
+    @WithFakeAccountForTest(email = "abc@example.com")
+    @Transactional
+    @Test
+    void addLocationTest () throws Exception {
+        Location location = new Location();
+        location.setCity("Example");
+        location.setLocalName("예시");
+        location.setProvince("SouthExample");
+        locationRepository.save(location);
+
+        mockMvc.perform(post(ProfileController.LOCATION_EDIT_VIEW_NAME+"/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(location))
+                .with(csrf()))
+                .andExpect(status().isOk());
+
+        Location resultLocation = locationRepository.findByCity(location.getCity());
+        assertNotNull(resultLocation);
+        assertTrue(accountRepository.findByEmail("abc@example.com").getLocations().contains(location));
+        locationRepository.deleteAll();
+    }
+
+    @DisplayName("remove location")
+    @WithFakeAccountForTest(email = "abc@example.com")
+    @Transactional
+    @Test
+    void removeLocationTest () throws Exception {
+        Location location = new Location();
+        location.setCity("Example");
+        location.setLocalName("예시");
+        location.setProvince("SouthExample");
+        locationRepository.save(location);
+
+        mockMvc.perform(delete(ProfileController.TAG_EDIT_VIEW_NAME+"/remove")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(location))
+                .with(csrf()))
+                .andExpect(status().isOk());
+
+        Location resultLocation = locationRepository.findByCity(location.getCity());
+        assertNotNull(resultLocation);
+        assertFalse(accountRepository.findByEmail("abc@example.com").getLocations().contains(resultLocation));
     }
 
 }

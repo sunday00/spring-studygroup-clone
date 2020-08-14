@@ -3,8 +3,10 @@ package lec.spring.studygroupclone.Controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lec.spring.studygroupclone.Models.Account;
+import lec.spring.studygroupclone.Models.Location;
 import lec.spring.studygroupclone.Models.Tag;
 import lec.spring.studygroupclone.Services.AccountService;
+import lec.spring.studygroupclone.Services.LocationService;
 import lec.spring.studygroupclone.Services.TagService;
 import lec.spring.studygroupclone.dataMappers.Profile;
 import lec.spring.studygroupclone.helpers.account.CurrentUser;
@@ -29,6 +31,7 @@ public class ProfileController {
     private final ProfileValidator profileValidator;
     private final AccountService accountService;
     private final TagService tagService;
+    private final LocationService locationService;
     private final ObjectMapper objectMapper;
 
     public static final String PROFILE_READ_VIEW_NAME = "/profile/show";
@@ -36,6 +39,7 @@ public class ProfileController {
     public static final String PASSWD_EDIT_VIEW_NAME = "/profile/pswd";
     public static final String NOTIFICATION_EDIT_VIEW_NAME = "/profile/noti";
     public static final String TAG_EDIT_VIEW_NAME = "/profile/tags";
+    public static final String LOCATION_EDIT_VIEW_NAME = "/profile/locations";
     public static final String ACCOUNT_EDIT_VIEW_NAME = "/profile/account";
 
     @InitBinder("profile")
@@ -139,6 +143,35 @@ public class ProfileController {
     public ResponseEntity deleteTag(@CurrentUser Account account, @RequestBody Tag tag){
         Tag resultTag = tagService.findByTitle(tag);
         accountService.removeTag(account, resultTag);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(LOCATION_EDIT_VIEW_NAME)
+    public String editLocation(@CurrentUser Account account, Model model) throws JsonProcessingException {
+        Account member = accountService.getAccount(account.getNickname());
+        model.addAttribute("account", member);
+        model.addAttribute(new Profile(account));
+        model.addAttribute("allLocations", objectMapper.writeValueAsString(locationService.getAllLocations()));
+        return LOCATION_EDIT_VIEW_NAME;
+    }
+
+    @PostMapping(LOCATION_EDIT_VIEW_NAME + "/add")
+    @ResponseBody
+    public ResponseEntity updateLocation(@CurrentUser Account account, @RequestBody Location location){
+        Location resultLocation = locationService.findByCity(location);
+        if(resultLocation != null){
+            accountService.updateLocation(account, resultLocation);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping(LOCATION_EDIT_VIEW_NAME + "/remove")
+    @ResponseBody
+    public ResponseEntity deleteLocation(@CurrentUser Account account, @RequestBody Location location){
+        Location resultlocation = locationService.findByCity(location);
+        accountService.removeLocation(account, resultlocation);
         return ResponseEntity.ok().build();
     }
 
