@@ -1,15 +1,16 @@
 package lec.spring.studygroupclone.Controllers;
 
 import lec.spring.studygroupclone.Models.Account;
+import lec.spring.studygroupclone.Models.EmailInfo;
 import lec.spring.studygroupclone.Repositories.AccountRepository;
 import lec.spring.studygroupclone.config.AppConfig;
+import lec.spring.studygroupclone.helpers.MailSender;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,9 @@ class AcountControllerTest {
 
     @MockBean
     JavaMailSender javaMailSender;
+
+    @MockBean
+    MailSender mailSender;
 
     @DisplayName("signup-form test")
     @Test
@@ -66,7 +70,7 @@ class AcountControllerTest {
         assertTrue( AppConfig.passwordEncoder().matches( "mysecurity123!", account.getPassword() ) );
         System.out.println(account.getPassword());
         System.out.println(account.getEmailCheckToken());
-        then(javaMailSender).should().send(any(SimpleMailMessage.class));
+        then(mailSender).should().send(any(EmailInfo.class));
     }
 
     @DisplayName("Token forced error")
