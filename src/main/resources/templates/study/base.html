@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div th:fragment="settings-menu (currentMenu)" class="list-group mb-2">
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'create'}? active" href="#" th:href="@{/study/create}">create</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'password'}? active" href="#" th:href="@{/study/pswd}">password</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'notifications'}? active" href="#" th:href="@{/study/noti}">alarm</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'tags'}? active" href="#" th:href="@{/study/tags}">tag</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'locations'}? active" href="#" th:href="@{/study/locations}">location</a>
+    <a class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'account'}? active" href="#" th:href="@{/study/account}">account</a>
+</div>
+
+</html>

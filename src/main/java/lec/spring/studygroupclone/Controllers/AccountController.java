@@ -6,7 +6,6 @@ import lec.spring.studygroupclone.helpers.account.AccountValidator;
 import lec.spring.studygroupclone.helpers.account.CurrentUser;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -21,7 +20,7 @@ import java.util.HashMap;
 
 @Controller
 @RequiredArgsConstructor
-public class AcountController {
+public class AccountController {
 
     private final AccountValidator accountValidator;
     private final AccountService accountService;
