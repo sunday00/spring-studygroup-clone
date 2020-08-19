@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>StudyGroup-clone Service</title>
+</head>
+<body>
+    <div>
+        <h1>Hello, <span th:text="${nickname}"></span>!</h1>
+        <p>StudyGroup-clone Service sent this email, because of register via this email. </p>
+        <p>You can verify the email is correctly registered by click
+            <a th:href="${host + link}" th:text="${host + link}"></a>.
+        </p>
+        <p>If you didn't register our site, just ignore this, but careful whether your email is stolen.</p>
+    </div>
+    <footer th:replace="fragment.html :: footer"></footer>
+</body>
+</html>

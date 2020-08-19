@@ -50,7 +50,7 @@ public class AccountService implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         Account account = accountRepository.findByEmail(username);
 
         if (account == null) {
@@ -107,6 +107,7 @@ public class AccountService implements UserDetailsService {
     // login
     private void login(Account account) {
         CurrentAccount currentAccount = new CurrentAccount(account);
+        System.out.println(currentAccount.getAccount().isEmailVerified());
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(currentAccount, // principal
                 account.getPassword(),
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));

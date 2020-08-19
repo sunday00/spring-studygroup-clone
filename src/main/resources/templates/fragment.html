@@ -68,6 +68,7 @@
 
 <div class="alert alert-warning" role="alert" sec:authorize="isAuthenticated()" th:if="${#authentication.getPrincipal().getAccount().isEmailVerified() == false}" th:fragment="needEmailVerified">
     You almost finish the process of join our site. But You need to VERIFY your EMAIL. <strong>CHECK YOUR EMAIL AND CLICK VERIFY LINK</strong> to finish the process. <a href="#" th:href="@{/check-email}" class="alert-link text-info">What email?</a>
+    <small>If you already verified other browser, Please re-Login</small>
 </div>
 
 <footer th:fragment="footer">

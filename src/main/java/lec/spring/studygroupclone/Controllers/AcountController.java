@@ -48,8 +48,7 @@ public class AcountController {
 
     @GetMapping("/check-email")
     public String checkEmail(){
-        String view = "account/check-email";
-        return view;
+        return "account/check-email";
     }
 
     @PostMapping("/resend-verification-token")

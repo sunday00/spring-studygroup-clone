@@ -26,7 +26,7 @@ public class HtmlRealEmailSender implements MailSender{
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, String.valueOf(StandardCharsets.UTF_8));
             helper.setTo(emailInfo.getTo());
             helper.setSubject(emailInfo.getSubject());
-            helper.setText(emailInfo.getMessage(), false);
+            helper.setText(emailInfo.getMessage(), true);
             javaMailSender.send(mimeMessage);
             log.info("Sent email : {}", emailInfo.getMessage());
         } catch (MessagingException e) {
