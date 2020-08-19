@@ -116,13 +116,14 @@ public class AccountService implements UserDetailsService {
 
     // update profile(address, description, profile image), password, notification
     public void update(Account account, Profile profile) throws IOException {
+
+        modelMapper.map(profile, account);
+
         if( Converter.b64ToFile(account, profile) != null ) {
             account.setProfileImage("/uploads" + Converter.b64ToFile(account, profile));
         } else {
             account.setProfileImage(null);
         }
-
-        modelMapper.map(profile, account);
 
         accountRepository.save(account);
     }

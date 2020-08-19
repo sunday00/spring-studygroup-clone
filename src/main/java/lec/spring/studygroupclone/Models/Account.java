@@ -50,7 +50,8 @@ public class Account {
 
     private String location;
 
-    @Lob @Basic(fetch = FetchType.EAGER)
+//    @Lob @Basic(fetch = FetchType.EAGER)
+    @Basic(fetch = FetchType.EAGER)
     private String profileImage;
 
     private boolean emailAlarm;
