@@ -19,4 +19,8 @@ public class StudyService {
         newStudy.addManager(account);
         return newStudy;
     }
+
+    public Study getStudyByPath(String path) {
+        return studyRepository.findByPath(path);
+    }
 }

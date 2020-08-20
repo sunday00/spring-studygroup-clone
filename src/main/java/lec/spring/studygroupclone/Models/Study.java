@@ -1,5 +1,6 @@
 package lec.spring.studygroupclone.Models;
 
+import lec.spring.studygroupclone.dataMappers.CurrentAccount;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,6 +14,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
+@NamedEntityGraph(name="Study.withAll", attributeNodes = {
+        @NamedAttributeNode("tags"),
+        @NamedAttributeNode("locations"),
+        @NamedAttributeNode("managers"),
+        @NamedAttributeNode("members")
+})
 @Getter @Setter @EqualsAndHashCode(of = "id")
 @Builder @AllArgsConstructor @NoArgsConstructor
 public class Study {
@@ -85,7 +92,7 @@ public class Study {
 
     private boolean recruiting;
 
-    private boolean published;
+    private boolean published = false;
 
     private boolean closed;
 
@@ -93,5 +100,20 @@ public class Study {
 
     public void addManager(Account account) {
         this.managers.add(account);
+    }
+
+    public boolean isJoinable(CurrentAccount currentAccount) {
+        Account account = currentAccount.getAccount();
+        return this.isPublished() && this.isRecruiting()
+                && !this.members.contains(account) && !this.managers.contains(account);
+
+    }
+
+    public boolean isMember(CurrentAccount currentAccount) {
+        return this.members.contains(currentAccount.getAccount());
+    }
+
+    public boolean isManager(CurrentAccount currentAccount) {
+        return this.managers.contains(currentAccount.getAccount());
     }
 }
