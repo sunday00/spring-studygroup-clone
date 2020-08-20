@@ -5,7 +5,7 @@
 
 <head th:replace="fragment.html :: head(~{ :: .additional })">
     <th:block class="additional">
-
+        <link rel="stylesheet" href="/node_modules/summernote/dist/summernote-bs4.min.css">
     </th:block>
 </head>
 
@@ -32,7 +32,49 @@
             <div class="row mt-3">
                 <form class="needs-validation col-12" action="#"
                       th:action="@{/study/create}" th:object="${studySetting}" method="post" novalidate>
+                    <div class="form-group">
+                        <label for="path">Study Path</label>
+                        <input id="path" type="text" th:field="*{path}" class="form-control"
+                               placeholder="ex) study-path" aria-describedby="pathHelp" required min="3" max="25">
+                        <small id="pathHelp" class="form-text text-muted">
+                            make path using 3-25 characters(digit, _, -, alphabet) for accessing your study ex) /study/<b>study-path</b>
+                        </small>
+                        <small class="invalid-feedback">don't skip this.</small>
+                        <small class="form-text text-danger" th:if="${#fields.hasErrors('path')}" th:errors="*{path}">Path is not valid.</small>
+                    </div>
 
+                    <div class="form-group">
+                        <label for="title">Study Name</label>
+                        <input id="title" type="text" th:field="*{title}" class="form-control"
+                               placeholder="SpringBoot" aria-describedby="titleHelp" required max="100">
+                        <small id="titleHelp" class="form-text text-muted">
+                            Do not whitespace with study name in 100 letters.
+                        </small>
+                        <small class="invalid-feedback">don't skip this.</small>
+                        <small class="form-text text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title is not valid.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="introduce">Brief introduce</label>
+                        <textarea id="introduce" type="textarea" th:field="*{introduce}" class="form-control"
+                                  placeholder="This is spring boot study" aria-describedby="introduceHelp" required maxlength="255"></textarea>
+                        <small id="introduceHelp" class="form-text text-muted">
+                            please short introduce in 255 letters.
+                        </small>
+                        <small class="invalid-feedback">please introduce your study.</small>
+                        <small class="form-text text-danger" th:if="${#fields.hasErrors('introduce')}" th:errors="*{introduce}">Introduce Error</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fullDescription">Details</label>
+                        <textarea id="fullDescription" type="textarea" th:field="*{fullDescription}" class="form-control"
+                                  placeholder="How to study, how much contact in offline..." aria-describedby="fullDescriptionHelp" required></textarea>
+                        <small id="fullDescriptionHelp" class="form-text text-muted">
+                            please write detail like goal, schedule, way, textbook, specific person and etc.
+                        </small>
+                        <small class="invalid-feedback">detail is required</small>
+                        <small class="form-text text-danger" th:if="${#fields.hasErrors('fullDescription')}" th:errors="*{fullDescription}">FullDescription Error</small>
+                    </div>
 
                     <div class="form-group mt-5">
                         <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">Create</button>
@@ -51,7 +93,17 @@
 
 <th:block th:replace="fragment.html :: scripts(~{ :: .additionalS })">
     <th:block class="additionalS">
-
+        <script src="/node_modules/summernote/dist/summernote-bs4.min.js"></script>
+        <script>
+            $(function () {
+                $('#fullDescription').summernote({
+                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Noto Sans KR', 'Merriweather'],
+                    placeholder: 'please write detail like goal, schedule, way, textbook, specific person and etc.',
+                    tabsize: 2,
+                    height: 300
+                });
+            });
+        </script>
     </th:block>
 </th:block>
 <th:block th:replace="fragment.html :: formValidationScript"></th:block>
