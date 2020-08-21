@@ -18,7 +18,7 @@ public class StudySetting {
     private String path;
 
     @NotBlank
-    @Pattern(regexp = "^[a-zA-Z0-9-_]{1,255}$")
+    @Pattern(regexp = "^[a-zA-Z0-9-_\\s]{1,255}$")
     private String title;
 
     @NotBlank

@@ -23,8 +23,9 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class StudyController {
 
-    private static final String STUDY_SETTING_CREATE_VIEW = "/study/setting/create";
-    private static final String STUDY_READ_SHOW_VIEW = "/study/read/show";
+    public static final String STUDY_SETTING_CREATE_VIEW = "/study/setting/create";
+    public static final String STUDY_READ_SHOW_VIEW = "/study/read/show";
+    public static final String STUDY_READ_MEMBERS_VIEW = "/study/read/members";
 
     private final StudyService studyService;
     private final ModelMapper modelMapper;
@@ -43,8 +44,9 @@ public class StudyController {
     }
 
     @PostMapping(STUDY_SETTING_CREATE_VIEW)
-    public String insert(@CurrentUser Account account, @Valid StudySetting studySetting, Errors errors){
+    public String insert(@CurrentUser Account account, @Valid StudySetting studySetting, Errors errors, Model model){
         if(errors.hasErrors()){
+            model.addAttribute(account);
             return STUDY_SETTING_CREATE_VIEW;
         }
 
@@ -58,5 +60,12 @@ public class StudyController {
         model.addAttribute(account);
         model.addAttribute(studyService.getStudyByPath(path));
         return STUDY_READ_SHOW_VIEW;
+    }
+
+    @GetMapping(STUDY_READ_MEMBERS_VIEW+"/{path}")
+    public String members(@CurrentUser Account account, @PathVariable String path, Model model){
+        model.addAttribute(account);
+        model.addAttribute(studyService.getStudyByPath(path));
+        return STUDY_READ_MEMBERS_VIEW;
     }
 }

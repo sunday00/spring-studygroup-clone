@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragment.html :: head(~{ :: .additional })">
+    <th:block class="additional">
+
+    </th:block>
+</head>
+
+<body class="bg-light">
+<nav th:replace="fragment.html :: nav"></nav>
+
+<div th:replace="fragment.html :: needEmailVerified"></div>
+
+<div th:replace="study/read/base.html :: banner"></div>
+
+<div class="container">
+    <div th:replace="study/read/base.html :: info"></div>
+    <div th:replace="study/read/base.html :: menu(studyMenu='members')"></div>
+
+    <div th:replace="study/read/base.html :: members(members=${study.managers},isManager=${true})"></div>
+    <div th:replace="study/read/base.html :: members(members=${study.members},isManager=${false})"></div>
+
+</div>
+
+<footer th:replace="fragment.html :: footer"></footer>
+
+<th:block th:replace="fragment.html :: scripts(~{ :: .additionalS })">
+    <th:block class="additionalS">
+        <script>
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+        </script>
+    </th:block>
+</th:block>
+<th:block th:replace="fragment.html :: formValidationScript"></th:block>
+
+</body>
+</html>
