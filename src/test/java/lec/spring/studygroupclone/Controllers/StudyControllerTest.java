@@ -4,6 +4,7 @@ import lec.spring.studygroupclone.Models.Study;
 import lec.spring.studygroupclone.Repositories.AccountRepository;
 import lec.spring.studygroupclone.Repositories.StudyRepository;
 import lec.spring.studygroupclone.Repositories.TagRepository;
+import lec.spring.studygroupclone.dataMappers.StudySetting;
 import lec.spring.studygroupclone.helpers.account.WithFakeAccountForTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -51,7 +52,7 @@ class StudyControllerTest {
     @WithFakeAccountForTest(email = "abc@example.com")
     @Test
     void createStudy () throws Exception {
-        mockMvc.perform(post(StudyController.STUDY_SETTING_CREATE_VIEW)
+        mockMvc.perform(post(StudySettingController.STUDY_SETTING_CREATE_VIEW)
                 .param("path", "example")
                 .param("title", "Example study")
                 .param("introduce", "hello")

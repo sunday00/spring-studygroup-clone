@@ -116,4 +116,8 @@ public class Study {
     public boolean isManager(CurrentAccount currentAccount) {
         return this.managers.contains(currentAccount.getAccount());
     }
+
+    public boolean isManager(Account account) {
+        return this.managers.contains(account);
+    }
 }

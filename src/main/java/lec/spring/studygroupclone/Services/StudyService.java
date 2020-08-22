@@ -21,6 +21,12 @@ public class StudyService {
     }
 
     public Study getStudyByPath(String path) {
-        return studyRepository.findByPath(path);
+        Study study = studyRepository.findByPath(path);
+
+        if( study == null ){
+             throw new IllegalArgumentException("There is no trudy : " + path);
+        }
+
+        return study;
     }
 }

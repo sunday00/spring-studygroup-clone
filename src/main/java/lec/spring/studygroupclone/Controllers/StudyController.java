@@ -23,7 +23,6 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class StudyController {
 
-    public static final String STUDY_SETTING_CREATE_VIEW = "/study/setting/create";
     public static final String STUDY_READ_SHOW_VIEW = "/study/read/show";
     public static final String STUDY_READ_MEMBERS_VIEW = "/study/read/members";
 
@@ -34,25 +33,6 @@ public class StudyController {
     @InitBinder("studySetting")
     public void studySettingInitBinder(WebDataBinder webDataBinder){
         webDataBinder.addValidators(studySettingValidator);
-    }
-
-    @GetMapping(STUDY_SETTING_CREATE_VIEW)
-    public String create(@CurrentUser Account account, Model model){
-        model.addAttribute(account);
-        model.addAttribute(new StudySetting());
-        return STUDY_SETTING_CREATE_VIEW;
-    }
-
-    @PostMapping(STUDY_SETTING_CREATE_VIEW)
-    public String insert(@CurrentUser Account account, @Valid StudySetting studySetting, Errors errors, Model model){
-        if(errors.hasErrors()){
-            model.addAttribute(account);
-            return STUDY_SETTING_CREATE_VIEW;
-        }
-
-        Study newStudy = studyService.create(modelMapper.map(studySetting, Study.class), account);
-
-        return "redirect:"+STUDY_READ_SHOW_VIEW+"/"+newStudy.getPath();
     }
 
     @GetMapping(STUDY_READ_SHOW_VIEW+"/{path}")

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragment.html :: head(~{ :: .additional })">
+    <th:block class="additional">
+        <link rel="stylesheet" href="/node_modules/summernote/dist/summernote-bs4.min.css">
+    </th:block>
+</head>
+
+<body class="bg-light">
+<nav th:replace="fragment.html :: nav"></nav>
+
+<div th:replace="fragment.html :: needEmailVerified"></div>
+
+<div th:replace="study/read/base.html :: banner"></div>
+
+<div class="container">
+    <div th:replace="study/read/base.html :: info"></div>
+    <div th:replace="study/read/base.html :: menu(studyMenu='settings')"></div>
+
+    <div class="row px-3 justify-content-center">
+        <div th:if="${info}" class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+            <span th:text="${info}">info</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <form class="needs-validation" th:action="@{'/study/setting/edit/' + ${study.getPath()}}"
+              th:object="${studySetting}" method="post" novalidate>
+            <input type="hidden" th:field="*{path}">
+            <div class="form-group">
+                <label for="title">title</label>
+                <textarea id="title" type="text" th:field="*{title}" class="form-control"
+                          placeholder="introduce briefly." aria-describedby="titleHelp" required maxlength="100">
+                </textarea>
+                <small id="titleHelper" class="form-text text-muted">
+                    introduce briefly.
+                </small>
+                <small class="invalid-feedback">introduce briefly.</small>
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('introduce')}" th:errors="*{introduce}">Introduce Error</small>
+            </div>
+            <div class="form-group">
+                <label for="shortDescription">introduce</label>
+                <textarea id="shortDescription" type="textarea" th:field="*{introduce}" class="form-control"
+                          placeholder="introduce briefly." aria-describedby="introduceHelp" required maxlength="100">
+                </textarea>
+                <small id="shortDescriptionHelp" class="form-text text-muted">
+                    introduce briefly.
+                </small>
+                <small class="invalid-feedback">introduce briefly.</small>
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('introduce')}" th:errors="*{introduce}">Introduce Error</small>
+            </div>
+
+            <div class="form-group">
+                <label for="fullDescription">Details</label>
+                <textarea id="fullDescription" type="textarea" th:field="*{fullDescription}" class="form-control"
+                          placeholder="Explain study as detail as you can." aria-describedby="fullDescriptionHelp" required></textarea>
+                <small id="fullDescriptionHelp" class="form-text text-muted">
+                    please write detail like goal, schedule, way, textbook, specific person and etc.
+                </small>
+                <small class="invalid-feedback">How to study, how much contact in offline...</small>
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('fullDescription')}" th:errors="*{fullDescription}">FullDescription Error</small>
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-primary btn-block" type="submit"
+                        aria-describedby="submitHelp">UPDATE</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="fragment.html :: footer"></footer>
+
+<th:block th:replace="fragment.html :: scripts(~{ :: .additionalS })">
+    <th:block class="additionalS">
+        <script src="/node_modules/summernote/dist/summernote-bs4.min.js"></script>
+        <script>
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+                $('#fullDescription').summernote({
+                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Noto Sans KR', 'Merriweather'],
+                    placeholder: 'please write detail like goal, schedule, way, textbook, specific person and etc.',
+                    tabsize: 2,
+                    height: 300
+                });
+            });
+        </script>
+    </th:block>
+</th:block>
+<th:block th:replace="fragment.html :: formValidationScript"></th:block>
+
+</body>
+</html>

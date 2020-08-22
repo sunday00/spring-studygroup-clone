@@ -171,6 +171,7 @@ public class AccountService implements UserDetailsService {
 
         if( member == null ){
             result.put("error", "Not found user. Register first.");
+            // TODO:: if exception handle start, this must be IllegalArgumentException
             return result;
         }
 

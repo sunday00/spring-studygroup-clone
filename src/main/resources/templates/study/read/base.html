@@ -94,7 +94,7 @@
             <i class="fa fa-calendar"></i> events
         </a>
         <a sec:authorize="isAuthenticated()" th:if="${study.isManager(#authentication.principal)}"
-           class="nav-item nav-link" th:classappend="${studyMenu == 'settings'}? active" href="#" th:href="@{'/study/read/description/' + ${study.path}}">
+           class="nav-item nav-link" th:classappend="${studyMenu == 'settings'}? active" href="#" th:href="@{'/study/setting/edit/' + ${study.path}}">
             <i class="fa fa-cog"></i> settings
         </a>
     </nav>
