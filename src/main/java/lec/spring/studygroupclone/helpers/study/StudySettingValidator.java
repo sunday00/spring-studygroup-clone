@@ -6,6 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +27,11 @@ public class StudySettingValidator implements Validator{
     public void validate(Object target, Errors errors) {
         StudySetting study = (StudySetting) target;
 
-        if(studyRepository.existsByPath(study.getPath())){
+        ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequestUri();
+        String uri = builder.build().toUri().getPath();
+        String[] uriSplit = uri.split("/");
+
+        if(studyRepository.existsByPath(study.getPath()) && !uriSplit[uriSplit.length - 2].equals("edit") ){
             errors.rejectValue("path", "wrong.path", "This path is taken others");
         }
 

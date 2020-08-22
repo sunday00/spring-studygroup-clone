@@ -20,56 +20,62 @@
     <div th:replace="study/read/base.html :: info"></div>
     <div th:replace="study/read/base.html :: menu(studyMenu='settings')"></div>
 
-    <div class="row px-3 justify-content-center">
-        <div th:if="${info}" class="alert alert-info alert-dismissible fade show mt-3" role="alert">
-            <span th:text="${info}">info</span>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+    <div class="row mt-3 justify-content-center">
+        <div class="col-3">
+            <div th:replace="study/setting/base.html :: settings-menu(currentMenu='edit')"></div>
         </div>
-        <form class="needs-validation" th:action="@{'/study/setting/edit/' + ${study.getPath()}}"
-              th:object="${studySetting}" method="post" novalidate>
-            <input type="hidden" th:field="*{path}">
-            <div class="form-group">
-                <label for="title">title</label>
-                <textarea id="title" type="text" th:field="*{title}" class="form-control"
-                          placeholder="introduce briefly." aria-describedby="titleHelp" required maxlength="100">
-                </textarea>
-                <small id="titleHelper" class="form-text text-muted">
-                    introduce briefly.
-                </small>
-                <small class="invalid-feedback">introduce briefly.</small>
-                <small class="form-text text-danger" th:if="${#fields.hasErrors('introduce')}" th:errors="*{introduce}">Introduce Error</small>
+        <div class="col-7">
+            <div th:if="${info}" class="alert alert-info alert-dismissible fade show mt-3 w-full" role="alert">
+                <span th:text="${info}">info</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="form-group">
-                <label for="shortDescription">introduce</label>
-                <textarea id="shortDescription" type="textarea" th:field="*{introduce}" class="form-control"
-                          placeholder="introduce briefly." aria-describedby="introduceHelp" required maxlength="100">
-                </textarea>
-                <small id="shortDescriptionHelp" class="form-text text-muted">
-                    introduce briefly.
-                </small>
-                <small class="invalid-feedback">introduce briefly.</small>
-                <small class="form-text text-danger" th:if="${#fields.hasErrors('introduce')}" th:errors="*{introduce}">Introduce Error</small>
-            </div>
+            <form class="needs-validation" th:action="@{'/study/setting/edit/' + ${study.getPath()}}"
+                  th:object="${studySetting}" th:method="POST" novalidate>
+                <input type="hidden" th:field="*{path}">
+                <div class="form-group">
+                    <label for="title">title</label>
+                    <textarea id="title" type="text" th:field="*{title}" class="form-control"
+                              placeholder="introduce briefly." aria-describedby="titleHelp" required maxlength="100">
+                    </textarea>
+                    <small id="titleHelper" class="form-text text-muted">
+                        introduce briefly.
+                    </small>
+                    <small class="invalid-feedback">introduce briefly.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('introduce')}" th:errors="*{introduce}">Introduce Error</small>
+                </div>
+                <div class="form-group">
+                    <label for="shortDescription">introduce</label>
+                    <textarea id="shortDescription" type="textarea" th:field="*{introduce}" class="form-control"
+                              placeholder="introduce briefly." aria-describedby="introduceHelp" required maxlength="100">
+                    </textarea>
+                    <small id="shortDescriptionHelp" class="form-text text-muted">
+                        introduce briefly.
+                    </small>
+                    <small class="invalid-feedback">introduce briefly.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('introduce')}" th:errors="*{introduce}">Introduce Error</small>
+                </div>
 
-            <div class="form-group">
-                <label for="fullDescription">Details</label>
-                <textarea id="fullDescription" type="textarea" th:field="*{fullDescription}" class="form-control"
-                          placeholder="Explain study as detail as you can." aria-describedby="fullDescriptionHelp" required></textarea>
-                <small id="fullDescriptionHelp" class="form-text text-muted">
-                    please write detail like goal, schedule, way, textbook, specific person and etc.
-                </small>
-                <small class="invalid-feedback">How to study, how much contact in offline...</small>
-                <small class="form-text text-danger" th:if="${#fields.hasErrors('fullDescription')}" th:errors="*{fullDescription}">FullDescription Error</small>
-            </div>
+                <div class="form-group">
+                    <label for="fullDescription">Details</label>
+                    <textarea id="fullDescription" type="textarea" th:field="*{fullDescription}" class="form-control"
+                              placeholder="Explain study as detail as you can." aria-describedby="fullDescriptionHelp" required></textarea>
+                    <small id="fullDescriptionHelp" class="form-text text-muted">
+                        please write detail like goal, schedule, way, textbook, specific person and etc.
+                    </small>
+                    <small class="invalid-feedback">How to study, how much contact in offline...</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('fullDescription')}" th:errors="*{fullDescription}">FullDescription Error</small>
+                </div>
 
-            <div class="form-group">
-                <button class="btn btn-primary btn-block" type="submit"
-                        aria-describedby="submitHelp">UPDATE</button>
-            </div>
-        </form>
+                <div class="form-group">
+                    <button class="btn btn-primary btn-block" type="submit"
+                            aria-describedby="submitHelp">UPDATE</button>
+                </div>
+            </form>
+        </div>
     </div>
+
 </div>
 
 <footer th:replace="fragment.html :: footer"></footer>

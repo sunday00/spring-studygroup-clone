@@ -33,6 +33,8 @@ public class HtmlRealEmailSender implements MailSender{
             System.out.println("==========================");
             log.error("failed to send email", e);
             System.out.println("==========================");
+            throw new RuntimeException(e);
+
         }
     }
 }

@@ -13,10 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -67,6 +65,27 @@ public class StudySettingController {
         return STUDY_SETTING_UPDATE_VIEW;
     }
 
+    @PostMapping(STUDY_SETTING_UPDATE_VIEW + "/{path}")
+    public String update (@CurrentUser Account account, @PathVariable String path,
+                          @Valid StudySetting studySetting, Errors errors,
+                          Model model, RedirectAttributes redirectAttributes) {
+
+        Study study = studyService.getStudyByPath(path);
+
+        if( errors.hasErrors() ){
+            model.addAttribute(account);
+            model.addAttribute(study);
+            return STUDY_SETTING_UPDATE_VIEW;
+        }
+
+        study.setIntroduce(studySetting.getIntroduce());
+        study.setFullDescription(studySetting.getFullDescription());
+        studyService.save(study, studySetting);
+
+        redirectAttributes.addFlashAttribute("info", "modify success");
+
+        return "redirect:" + STUDY_SETTING_UPDATE_VIEW + "/" + path;
+    }
 
 
 }
