@@ -1,11 +1,13 @@
 package lec.spring.studygroupclone.Models;
 
+import lec.spring.studygroupclone.config.AppConfig;
 import lec.spring.studygroupclone.dataMappers.CurrentAccount;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -63,6 +65,11 @@ public class Study {
     @Lob @Basic(fetch = FetchType.EAGER)
     private String image;
     //TODO:: change for not base64. using helper.convertor;
+
+    public boolean imageFileExists(){
+        File f = new File(AppConfig.UPLOAD_PATH + "/studies/" + path + ".png");
+        return f.exists();
+    }
 
     @ManyToMany
     private Set<Tag> tags = new HashSet<>();

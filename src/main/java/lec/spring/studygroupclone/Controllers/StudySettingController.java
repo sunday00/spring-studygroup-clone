@@ -16,7 +16,9 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class StudySettingController {
 
     public static final String STUDY_SETTING_CREATE_VIEW = "/study/setting/create";
     public static final String STUDY_SETTING_UPDATE_VIEW = "/study/setting/edit";
+    public static final String STUDY_SETTING_BANNER_VIEW = "/study/setting/banner";
 
     private final StudyService studyService;
     private final ModelMapper modelMapper;
@@ -87,5 +90,38 @@ public class StudySettingController {
         return "redirect:" + STUDY_SETTING_UPDATE_VIEW + "/" + path;
     }
 
+    @GetMapping(STUDY_SETTING_BANNER_VIEW + "/{path}")
+    public String banner (@CurrentUser Account account, @PathVariable String path, Model model) {
+        Study study = studyService.getStudyByPath(path);
+        if( !study.isManager(account) ) {
+            throw new AccessDeniedException("Not enough permission");
+        };
+        model.addAttribute(account);
+        model.addAttribute(study);
+        model.addAttribute(modelMapper.map(study, StudySetting.class));
+        return STUDY_SETTING_BANNER_VIEW;
+    }
+
+    @PostMapping(STUDY_SETTING_BANNER_VIEW+"-toggle/{path}")
+    public String bannerToggle(@CurrentUser Account account, @PathVariable String path, String enable,
+                               Model model, RedirectAttributes redirectAttributes){
+
+        Study study = studyService.getStudyByPath(path);
+
+        studyService.setStudyToggleBannerUsing(study, enable);
+
+        return "redirect:" + STUDY_SETTING_BANNER_VIEW + "/" + path;
+    }
+
+    @PostMapping(STUDY_SETTING_BANNER_VIEW+"-image/{path}")
+    public String bannerImage(@CurrentUser Account account, @PathVariable String path, String image,
+                               Model model, RedirectAttributes redirectAttributes) throws IOException {
+
+        Study study = studyService.getStudyByPath(path);
+
+        studyService.setStudyBannerImage(study, image);
+
+        return "redirect:" + STUDY_SETTING_BANNER_VIEW + "/" + path;
+    }
 
 }

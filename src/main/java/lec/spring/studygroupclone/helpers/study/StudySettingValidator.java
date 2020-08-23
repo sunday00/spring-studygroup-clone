@@ -31,7 +31,7 @@ public class StudySettingValidator implements Validator{
         String uri = builder.build().toUri().getPath();
         String[] uriSplit = uri.split("/");
 
-        if(studyRepository.existsByPath(study.getPath()) && !uriSplit[uriSplit.length - 2].equals("edit") ){
+        if(studyRepository.existsByPath(study.getPath()) && uriSplit[uriSplit.length - 1].equals("create") ){
             errors.rejectValue("path", "wrong.path", "This path is taken others");
         }
 

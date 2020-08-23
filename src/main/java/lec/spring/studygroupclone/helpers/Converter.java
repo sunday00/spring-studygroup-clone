@@ -1,6 +1,7 @@
 package lec.spring.studygroupclone.helpers;
 
 import lec.spring.studygroupclone.Models.Account;
+import lec.spring.studygroupclone.Models.Study;
 import lec.spring.studygroupclone.config.AppConfig;
 import lec.spring.studygroupclone.dataMappers.Profile;
 
@@ -29,5 +30,17 @@ public class Converter {
         fileOutputStream.write(img);
 
         return profileImagePath;
+    }
+
+    public static String b64ToFile(Study study, String image) throws IOException{
+        String studyImagePath = "/studies/" + study.getPath() + ".png";
+        String[] str_imgs = image.split(",");
+
+        byte[] img = Base64.getDecoder().decode(str_imgs[1]);
+
+        FileOutputStream fileOutputStream = new FileOutputStream(AppConfig.UPLOAD_PATH + studyImagePath);
+        fileOutputStream.write(img);
+
+        return studyImagePath;
     }
 }

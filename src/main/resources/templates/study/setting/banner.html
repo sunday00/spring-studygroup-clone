@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragment.html :: head(~{ :: .additional })">
+    <th:block class="additional">
+        <link rel="stylesheet" href="/node_modules/cropper/dist/cropper.min.css" />
+        <style>
+            #study-logo img {
+                max-height: 200px;
+            }
+
+            #current-study-image img {
+                max-height: 100px;
+            }
+        </style>
+    </th:block>
+</head>
+
+<body class="bg-light">
+<nav th:replace="fragment.html :: nav"></nav>
+
+<div th:replace="fragment.html :: needEmailVerified"></div>
+
+<div th:replace="study/read/base.html :: banner"></div>
+
+<div class="container">
+    <div th:replace="study/read/base.html :: info"></div>
+    <div th:replace="study/read/base.html :: menu(studyMenu='settings')"></div>
+
+    <div class="row mt-3 justify-content-center">
+        <div class="col-3">
+            <div th:replace="study/setting/base.html :: settings-menu(currentMenu='banner', path=${study.getPath()})"></div>
+        </div>
+        <div class="col-7">
+            <div th:if="${info}" class="alert alert-info alert-dismissible fade show mt-3 w-full" role="alert">
+                <span th:text="${info}">info</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="row">
+                <h2 class="col-sm-12">Toggle Using Image or not</h2>
+            </div>
+            <form th:if="${!study.useBanner}" action="#" th:action="@{'/study/setting/banner-toggle/'+ ${study.getPath()}}" method="POST" novalidate>
+                <input type="hidden" name="enable" value="true" />
+                <div class="alert alert-primary" role="alert">
+                    Using banner image. The default image will be exported until you set the Banner Image.
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-outline-primary btn-block" type="submit" aria-describedby="submitHelp">USE BANNER</button>
+                </div>
+            </form>
+            <form th:if="${study.useBanner}" action="#" th:action="@{'/study/setting/banner-toggle/'+ ${study.getPath()}}" method="POST" novalidate>
+                <input type="hidden" name="enable" value="false" />
+                <div class="alert alert-primary" role="alert">
+                    Remove Image from your study space. Page is not much pretty, But a little faster.
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-outline-primary btn-block" type="submit" aria-describedby="submitHelp">NOT USE BANNER</button>
+                </div>
+            </form>
+
+            <hr/>
+
+            <div class="row">
+                <h2 class="col-sm-12">Change the banner Image</h2>
+            </div>
+            <form id="imageForm" action="#" th:action="@{'/study/setting/banner-image/' + ${study.getPath()}}" method="post" novalidate>
+                <div class="form-group">
+                    <input id="studyImage" type="hidden" name="image" class="form-control" />
+                </div>
+            </form>
+            <div class="card text-center image-wrap">
+                <div id="current-study-image" class="mt-3">
+                    <img class="rounded" th:if="${!#strings.isEmpty(study.image)}" th:src="${study.image}" width="100%" alt="name" th:alt="${study.title}"/>
+                    <img class="rounded" th:if="${#strings.isEmpty(study.image)}" src="/images/default_banner.png" width="100%" alt="name" th:alt="${study.title}"/>
+                </div>
+                <div id="new-study-image" class="mt-3"></div>
+                <div class="card-body">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="study-image-file">
+                        <label class="custom-file-label" for="study-image-file">Study Banner Image</label>
+                    </div>
+                    <div id="new-study-image-control" class="mt-3">
+                        <button class="btn btn-outline-primary btn-block" id="cut-button">Cut</button>
+                        <button class="btn btn-outline-success btn-block" id="confirm-button">Confirm</button>
+                        <button class="btn btn-primary btn-block" id="save-button">Save</button>
+                        <button class="btn btn-outline-warning btn-block" id="reset-button">Cancel</button>
+                    </div>
+                    <div id="cropped-new-study-image" class="mt-3"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<footer th:replace="fragment.html :: footer"></footer>
+
+<th:block th:replace="fragment.html :: scripts(~{ :: .additionalS })">
+    <th:block class="additionalS">
+        <script src="/node_modules/cropper/dist/cropper.min.js"></script>
+        <script src="/node_modules/jquery-cropper/dist/jquery-cropper.min.js"></script>
+        <script>
+            'use strict';
+
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+
+                let cropper = '';
+                let $confirmBtn = $("#confirm-button");
+                let $resetBtn = $("#reset-button");
+                let $cutBtn = $("#cut-button");
+                let $saveBtn = $("#save-button");
+                let $newStudyImage = $("#new-study-image");
+                let $currentStudyImage = $("#current-study-image");
+                let $resultImage = $("#cropped-new-study-image");
+                let $studyImage = $("#studyImage");
+                let $imageWrap = $(".image-wrap");
+
+                $newStudyImage.hide();
+                $cutBtn.hide();
+                $resetBtn.hide();
+                $confirmBtn.hide();
+                $saveBtn.hide();
+
+                $("#study-image-file").change(function(e) {
+                    if (e.target.files.length === 1) {
+                        const reader = new FileReader();
+                        reader.onload = e => {
+                            if (e.target.result) {
+                                if (!e.target.result.startsWith("data:image")) {
+                                    alert("file should be image.");
+                                    return;
+                                }
+
+                                let img = document.createElement("img");
+                                img.id = 'new-study';
+                                img.src = e.target.result;
+                                // img.width = 250;
+                                img.setAttribute('width', '100%');
+
+                                $newStudyImage.html(img);
+                                $newStudyImage.show();
+                                $currentStudyImage.hide();
+
+                                let $newImage = $(img);
+                                $newImage.cropper({aspectRatio: 13/2});
+                                cropper = $newImage.data('cropper');
+
+                                $cutBtn.show();
+                                $confirmBtn.hide();
+                                $resetBtn.show();
+                            }
+                        };
+
+                        reader.readAsDataURL(e.target.files[0]);
+                    }
+                });
+
+                $resetBtn.click(function() {
+                    $("#profile-image-file").val('');
+                    $currentStudyImage.show();
+                    $newStudyImage.hide();
+                    $resultImage.hide();
+                    $resetBtn.hide();
+                    $cutBtn.hide();
+                    $confirmBtn.hide();
+                    $studyImage.val('');
+                });
+
+                $cutBtn.click(function () {
+                    let dataUrl = cropper.getCroppedCanvas().toDataURL();
+
+                    // if (dataUrl.length > 3000 * 1024) {
+                    //     alert("Too big. Lower then 3Mb current is " + dataUrl.length / 1024);
+                    //     return;
+                    // }  // I don't need. Because I accept data and forced smaller this and save.
+
+                    let canvas = document.createElement("canvas");
+                    let ctx = canvas.getContext("2d");
+
+                    canvas.width = $imageWrap.width();
+
+                    let image = new Image();
+                    let resampledImage;
+                    image.onload = function(e) {
+                        ctx.drawImage(image,
+                            0, 0, image.width, image.height,
+                            0, 0, canvas.width, canvas.height
+                        );
+                        resampledImage = new Image();
+                        resampledImage.src = canvas.toDataURL();
+
+                        let newImage = document.createElement("img");
+                        newImage.id = "cropped-new-study-image";
+                        newImage.src = resampledImage.src;
+                        // newImage.width = $imageWrap.width();
+                        newImage.style.width = "100%";
+
+                        $resultImage.html(newImage);
+                        $resultImage.show();
+                        $confirmBtn.show();
+
+                        $confirmBtn.click(function () {
+                            //TODO:: convert blob and make realfile, send via ajax, then receive the url and save;
+                            $newStudyImage.html(newImage);
+                            $cutBtn.hide();
+                            $confirmBtn.hide();
+                            $studyImage.val(newImage.src);
+                            $saveBtn.show();
+                        });
+                    };
+
+                    image.src = dataUrl;
+
+                });
+
+                $saveBtn.click(function() {
+                    $("#imageForm").submit();
+                })
+
+            });
+        </script>
+    </th:block>
+</th:block>
+<th:block th:replace="fragment.html :: formValidationScript"></th:block>
+
+</body>
+</html>
