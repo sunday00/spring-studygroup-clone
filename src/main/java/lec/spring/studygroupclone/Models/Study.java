@@ -22,6 +22,14 @@ import java.util.stream.Collectors;
         @NamedAttributeNode("managers"),
         @NamedAttributeNode("members")
 })
+@NamedEntityGraph(name = "Study.withTagsAndManagers", attributeNodes = {
+        @NamedAttributeNode("tags"),
+        @NamedAttributeNode("managers")
+})
+@NamedEntityGraph(name = "Study.withLocationsAndManagers", attributeNodes = {
+        @NamedAttributeNode("locations"),
+        @NamedAttributeNode("managers")
+})
 @Getter @Setter @EqualsAndHashCode(of = "id")
 @Builder @AllArgsConstructor @NoArgsConstructor
 public class Study {

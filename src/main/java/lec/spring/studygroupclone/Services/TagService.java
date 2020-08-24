@@ -28,8 +28,24 @@ public class TagService {
         return resultTag;
     }
 
+    public Tag addTag(String tagTitle){
+
+        Tag tag = new Tag();
+        tag.setTitle(tagTitle);
+
+        return this.addTag(tag);
+    }
+
+
     public Tag findByTitle(Tag tag) {
         return tagRepository.findByTitle(tag.getTitle());
+    }
+
+    public Tag findByTitle(String tagTitle) {
+        Tag tag = new Tag();
+        tag.setTitle(tagTitle);
+
+        return this.findByTitle(tag);
     }
 
     public List<String> getAllTags() {

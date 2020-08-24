@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<div th:fragment="banner" th:if="${study.useBanner}" class="row" id="study-logo">
+<div th:fragment="banner" th:if="${study.useBanner}" class="row w-100" id="study-logo">
     <img th:if="${!#strings.isEmpty(study.image) && study.imageFileExists()}" th:src="${study.image}" width="100%" />
     <img th:if="${#strings.isEmpty(study.image) || !study.imageFileExists()}" src="/images/default_banner.png" width="100%" />
 </div>

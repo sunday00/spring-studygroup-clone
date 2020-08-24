@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragment.html :: head(~{ :: .additional })">
+    <th:block class="additional">
+        <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css">
+        <style>
+            #study-logo img { max-height: 200px; }
+            .tagify__input{ margin:0; }
+            .tagify-outside{ border: 0; padding: 0; margin: 0; }
+        </style>
+    </th:block>
+</head>
+
+<body class="bg-light">
+<nav th:replace="fragment.html :: nav"></nav>
+
+<div th:replace="fragment.html :: needEmailVerified"></div>
+
+<div th:replace="study/read/base.html :: banner"></div>
+
+<div class="container">
+    <div th:replace="study/read/base.html :: info"></div>
+    <div th:replace="study/read/base.html :: menu(studyMenu='tags')"></div>
+
+    <div class="row mt-3 justify-content-center">
+        <div class="col-3">
+            <div th:replace="study/setting/base.html :: settings-menu(currentMenu='tags', path=${study.getPath()})"></div>
+        </div>
+        <div class="col-7">
+            <div th:if="${info}" class="alert alert-info alert-dismissible fade show mt-3 w-full" role="alert">
+                <span th:text="${info}">info</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="row">
+                <h2 class="col-sm-12">Topic tags</h2>
+            </div>
+
+            <div class="row mt-3">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-info" role="alert">
+                            Inputs some tags related studyGroup. Input some text and press 'Return(Enter)' or 'Comma(,)'.
+                        </div>
+                        <input type="hidden" id="path" th:value="${study.getPath()}">
+                        <input id="tags" type="text" name="tags" class="tagify-outside" aria-describedby="tagHelp"
+                               th:value="${#strings.listJoin(study.getTagList(), ',')}" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<footer th:replace="fragment.html :: footer"></footer>
+
+<th:block th:replace="fragment.html :: scripts(~{ :: .additionalS })">
+    <th:block class="additionalS">
+        <script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
+        <script th:inline="javascript">
+            let allTags = /*[[${allTags}]]*/ null;
+        </script>
+        <script th:replace="fragment.html :: ajaxCsrf"></script>
+        <script>
+            'use strict';
+
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+
+                function tagRequest(url, tagTitle){
+                    $.ajax({
+                        dataType: "json",
+                        autoComplete: {
+                            enable: true,
+                            rightKey: true
+                        },
+                        contentType: "application/json; charset:utf-8",
+                        method: url === "add" ? "POST" : "DELETE",
+                        url: `/study/setting/tags/${url}`,
+                        data: JSON.stringify({'title' : tagTitle, 'path': document.getElementById("path").value})
+                    }).done(function (data, status){
+                        console.log(`${data} and status is ${status}`);
+                    });
+                }
+
+                function onAdd(e){
+                    tagRequest("add", e.detail.data.value);
+                }
+
+                function onRemove(e){
+                    tagRequest("remove", e.detail.data.value);
+                }
+
+                let tagify = new Tagify( document.querySelector('#tags'), {
+                    pattern: /^.{0,20}$/,
+                    whitelist: JSON.parse(allTags),
+                    dropdown: {
+                        enabled: 1,
+                        position: "text"
+                    }
+                });
+
+                tagify.on('add', onAdd);
+                tagify.on('remove', onRemove);
+
+                tagify.DOM.input.classList.add('form-control');
+                tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
+
+            });
+        </script>
+    </th:block>
+</th:block>
+<th:block th:replace="fragment.html :: formValidationScript"></th:block>
+
+</body>
+</html>

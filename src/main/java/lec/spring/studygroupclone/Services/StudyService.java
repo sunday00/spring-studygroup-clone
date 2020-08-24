@@ -2,6 +2,8 @@ package lec.spring.studygroupclone.Services;
 
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Models.Study;
+import lec.spring.studygroupclone.Models.Tag;
+import lec.spring.studygroupclone.Repositories.AccountRepository;
 import lec.spring.studygroupclone.Repositories.StudyRepository;
 import lec.spring.studygroupclone.dataMappers.StudySetting;
 import lec.spring.studygroupclone.helpers.Converter;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -45,5 +48,15 @@ public class StudyService {
 
     public void setStudyBannerImage(Study study, String image) throws IOException {
         study.setImage("/uploads" + Converter.b64ToFile(study, image));
+    }
+
+    public void updateTag(Study study, Tag tag) {
+        Optional<Study> studyResult = studyRepository.findById(study.getId());
+        studyResult.ifPresent(s -> s.getTags().add(tag));
+    }
+
+    public void removeTag(Study study, Tag tag) {
+        Optional<Study> studyResult = studyRepository.findById(study.getId());
+        studyResult.ifPresent(s -> s.getTags().remove(tag));
     }
 }
