@@ -1,6 +1,7 @@
 package lec.spring.studygroupclone.Services;
 
 import lec.spring.studygroupclone.Models.Account;
+import lec.spring.studygroupclone.Models.Location;
 import lec.spring.studygroupclone.Models.Study;
 import lec.spring.studygroupclone.Models.Tag;
 import lec.spring.studygroupclone.Repositories.AccountRepository;
@@ -38,6 +39,23 @@ public class StudyService {
         return study;
     }
 
+    public Study getStudyByPath(String path, String mode) {
+        Study study = null;
+        if(mode.equals("tagAndManager")){
+            study = studyRepository.findAccountWithTagsByPath(path);
+        } else if( mode.equals("locationsAndManager") ){
+            study = studyRepository.findAccountWithLocationsByPath(path);
+        } else {
+            return this.getStudyByPath(path);
+        }
+
+        if( study == null ){
+            throw new IllegalArgumentException("There is no study : " + path);
+        }
+
+        return study;
+    }
+
     public void save(Study study, StudySetting studySetting) {
         modelMapper.map(studySetting, study);
     }
@@ -59,4 +77,15 @@ public class StudyService {
         Optional<Study> studyResult = studyRepository.findById(study.getId());
         studyResult.ifPresent(s -> s.getTags().remove(tag));
     }
+
+    public void updateLocation(Study study, Location location) {
+        Optional<Study> studyResult = studyRepository.findById(study.getId());
+        studyResult.ifPresent(s -> s.getLocations().add(location));
+    }
+
+    public void removeLocation(Study study, Location location) {
+        Optional<Study> studyResult = studyRepository.findById(study.getId());
+        studyResult.ifPresent(s -> s.getLocations().remove(location));
+    }
+
 }

@@ -27,7 +27,7 @@
 
     <div class="row mt-3 justify-content-center">
         <div class="col-3">
-            <div th:replace="study/setting/base.html :: settings-menu(currentMenu='tags', path=${study.getPath()})"></div>
+            <div th:replace="study/setting/base.html :: settings-menu(currentMenu='locations', path=${study.getPath()})"></div>
         </div>
         <div class="col-7">
             <div th:if="${info}" class="alert alert-info alert-dismissible fade show mt-3 w-full" role="alert">
@@ -38,18 +38,18 @@
             </div>
 
             <div class="row">
-                <h2 class="col-sm-12">Topic tags</h2>
+                <h2 class="col-sm-12">Study Locations</h2>
             </div>
 
             <div class="row mt-3">
                 <div class="row">
                     <div class="col-12">
                         <div class="alert alert-info" role="alert">
-                            Inputs some tags related studyGroup. Input some text and press 'Return(Enter)' or 'Comma(,)'.
+                            Inputs some locations that study will be mainly held. Input some text and press 'Return(Enter)' or 'Comma(,)'.
                         </div>
                         <input type="hidden" id="path" th:value="${study.getPath()}">
-                        <input id="tags" type="text" name="tags" class="tagify-outside" aria-describedby="tagHelp"
-                               th:value="${#strings.listJoin(study.getTagList(), ',')}" />
+                        <input id="tags" type="text" name="locations" class="tagify-outside" aria-describedby="locationHelp"
+                               th:value="${#strings.listJoin(study.getLocationList(), ',')}" />
                     </div>
                 </div>
             </div>
@@ -65,7 +65,7 @@
     <th:block class="additionalS">
         <script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
         <script th:inline="javascript">
-            let allTags = /*[[${allTags}]]*/ null;
+            let allLocations = /*[[${allLocations}]]*/ null;
         </script>
         <script th:replace="fragment.html :: ajaxCsrf"></script>
         <script>
@@ -74,7 +74,7 @@
             $(function () {
                 $('[data-toggle="tooltip"]').tooltip();
 
-                function tagRequest(url, tagTitle){
+                function tagRequest(url, locationName){
                     $.ajax({
                         dataType: "json",
                         autoComplete: {
@@ -83,24 +83,25 @@
                         },
                         contentType: "application/json; charset:utf-8",
                         method: url === "add" ? "POST" : "DELETE",
-                        url: `/study/setting/tags/${url}`,
-                        data: JSON.stringify({'title' : tagTitle, 'path': document.getElementById("path").value})
+                        url: `/study/setting/locations/${url}`,
+                        data: JSON.stringify({'city' : locationName, 'path': document.getElementById("path").value})
                     }).done(function (data, status){
                         console.log(`${data} and status is ${status}`);
                     });
                 }
 
                 function onAdd(e){
-                    tagRequest("add", e.detail.data.value);
+                    tagRequest("add", e.detail.data.value.split("(")[0]);
                 }
 
                 function onRemove(e){
-                    tagRequest("remove", e.detail.data.value);
+                    tagRequest("remove", e.detail.data.value.split("(")[0]);
                 }
 
                 let tagify = new Tagify( document.querySelector('#tags'), {
-                    pattern: /^.{0,20}$/,
-                    whitelist: JSON.parse(allTags),
+                    // pattern: /^.{0,40}$/,
+                    pattern: /^[A-Za-z]{1,20}\([ㄱ-ㅎ가-힣]{2,20}\)\/[a-zA-Z]{1,30}$/,
+                    whitelist: JSON.parse(allLocations),
                     dropdown: {
                         enabled: 1,
                         position: "text"

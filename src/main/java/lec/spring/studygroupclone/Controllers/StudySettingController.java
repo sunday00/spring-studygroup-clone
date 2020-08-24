@@ -3,11 +3,13 @@ package lec.spring.studygroupclone.Controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lec.spring.studygroupclone.Models.Account;
+import lec.spring.studygroupclone.Models.Location;
 import lec.spring.studygroupclone.Models.Study;
 import lec.spring.studygroupclone.Models.Tag;
 import lec.spring.studygroupclone.Services.LocationService;
 import lec.spring.studygroupclone.Services.StudyService;
 import lec.spring.studygroupclone.Services.TagService;
+import lec.spring.studygroupclone.dataMappers.Profile;
 import lec.spring.studygroupclone.dataMappers.StudySetting;
 import lec.spring.studygroupclone.helpers.account.CurrentUser;
 import lec.spring.studygroupclone.helpers.study.StudySettingValidator;
@@ -36,6 +38,7 @@ public class StudySettingController {
     public static final String STUDY_SETTING_UPDATE_VIEW = "/study/setting/edit";
     public static final String STUDY_SETTING_BANNER_VIEW = "/study/setting/banner";
     public static final String STUDY_SETTING_TAG_VIEW = "/study/setting/tags";
+    public static final String STUDY_SETTING_LOCATION_VIEW = "/study/setting/locations";
 
     private final ModelMapper modelMapper;
     private final ObjectMapper objectMapper;
@@ -139,7 +142,7 @@ public class StudySettingController {
 
     @GetMapping(STUDY_SETTING_TAG_VIEW + "/{path}")
     public String tagForm (@CurrentUser Account account, @PathVariable String path, Model model) throws JsonProcessingException {
-        Study study = studyService.getStudyByPath(path);
+        Study study = studyService.getStudyByPath(path, "tagAndManager");
         if( !study.isManager(account) ) {
             throw new AccessDeniedException("Not enough permission");
         };
@@ -168,4 +171,38 @@ public class StudySettingController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping(STUDY_SETTING_LOCATION_VIEW + "/{path}")
+    public String editLocation(@CurrentUser Account account, @PathVariable String path, Model model) throws JsonProcessingException {
+        Study study = studyService.getStudyByPath(path, "locationsAndManager");
+        if( !study.isManager(account) ) {
+            throw new AccessDeniedException("Not enough permission");
+        };
+        model.addAttribute(account);
+        model.addAttribute(study);
+        model.addAttribute(modelMapper.map(study, StudySetting.class));
+        model.addAttribute("allLocations", objectMapper.writeValueAsString(locationService.getAllLocations()));
+        return STUDY_SETTING_LOCATION_VIEW;
+    }
+
+    @PostMapping(STUDY_SETTING_LOCATION_VIEW + "/add")
+    @ResponseBody
+    public ResponseEntity updateLocation(@CurrentUser Account account, @RequestBody HashMap<String, String> body){
+        Location resultLocation = locationService.findByCity(body.get("city"));
+        Study study = studyService.getStudyByPath(body.get("path"));
+        if(resultLocation != null){
+            studyService.updateLocation(study, resultLocation);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping(STUDY_SETTING_LOCATION_VIEW + "/remove")
+    @ResponseBody
+    public ResponseEntity deleteLocation(@CurrentUser Account account, @RequestBody HashMap<String, String> body){
+        Location resultLocation = locationService.findByCity(body.get("city"));
+        Study study = studyService.getStudyByPath(body.get("path"));
+        studyService.removeLocation(study, resultLocation);
+        return ResponseEntity.ok().build();
+    }
 }

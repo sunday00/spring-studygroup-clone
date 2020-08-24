@@ -75,7 +75,7 @@
                 </span>
                 <span th:each="location: ${study.locations}" class="font-weight-light text-monospace badge badge-primary mr-3">
                     <a th:href="@{'/search/location/' + ${location.id}}" class="text-decoration-none text-white">
-                        <i class="fa fa-globe"></i> <span th:text="${location.localNameOfCity}">City</span>
+                        <i class="fa fa-globe"></i> <span th:text="${location.city}">City</span>
                     </a>
                 </span>
             </p>
