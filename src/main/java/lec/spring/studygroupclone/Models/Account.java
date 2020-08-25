@@ -8,6 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -95,7 +96,7 @@ public class Account {
         return this.lastEmailCheckTokenCreatedAt.isBefore(LocalDateTime.now().minusMinutes(waitMin));
     }
 
-    public int getRemainAbleToResendEmailCheckToken(){
-        return this.lastEmailCheckTokenCreatedAt.plusMinutes(10).getMinute() - LocalDateTime.now().getMinute();
+    public Long getRemainAbleToResendEmailCheckToken(){
+        return LocalDateTime.now().until(this.lastEmailCheckTokenCreatedAt.plusMinutes(10), ChronoUnit.MINUTES);
     }
 }

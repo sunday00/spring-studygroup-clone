@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragment.html :: head(~{ :: .additional })">
+    <th:block class="additional">
+        <style>
+            #study-logo img {
+                max-height: 200px;
+            }
+        </style>
+    </th:block>
+</head>
+
+<body class="bg-light">
+<nav th:replace="fragment.html :: nav"></nav>
+
+<div th:replace="fragment.html :: needEmailVerified"></div>
+
+<div th:replace="study/read/base.html :: banner"></div>
+
+<div class="container">
+    <div th:replace="study/read/base.html :: info"></div>
+    <div th:replace="study/read/base.html :: menu(studyMenu='settings')"></div>
+
+    <div class="row mt-3 justify-content-center">
+        <div class="col-3">
+            <div th:replace="study/setting/base.html :: settings-menu(currentMenu='status', path=${study.getPath()})"></div>
+        </div>
+        <div class="col-7">
+            <div th:if="${info}" class="alert alert-info alert-dismissible fade show mt-3 w-full" role="alert">
+                <span th:text="${info}">info</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="row">
+                <h2 class="col-sm-12">Status Setting</h2>
+            </div>
+            <form th:if="${!study.published && !study.closed}" th:action="@{'/study/setting/status/'+ ${study.getPath()}}" method="POST" novalidate>
+                <input type="hidden" name="status" value="publish" />
+                <div class="alert alert-primary" role="alert">
+                    <p>Open the study When you are ready.</p>
+                    <p>Make sure introduce, description, banner, topic, location setting is done.</p>
+                    <p>Sending notification for who wants to receive alarm related this topic.</p>
+                    <p class="text-danger">Warning! Status isn't able to turn back to preparing once you open. Make sure the study is really prepared.</p>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-outline-primary btn-block" type="submit" aria-describedby="submitHelp">OPEN</button>
+                </div>
+            </form>
+            <form th:if="${study.published && !study.closed}" th:action="@{'/study/setting/status/'+ ${study.getPath()}}" method="POST" novalidate>
+                <input type="hidden" name="status" value="close" />
+                <div class="alert alert-warning" role="alert">
+                    <p>Close the study When study is terminated.</p>
+                    <p>Make sure the study is really done.</p>
+                    <p>Sending notification for who wants to receive alarm related this study.</p>
+                    <p class="text-danger">Warning! Status isn't able to turn back to open once you close. Make sure the study is really finished.</p>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-outline-danger btn-block" type="submit" aria-describedby="submitHelp">Close</button>
+                </div>
+            </form>
+            <div th:if="${study.closed}" class="col-sm-12 alert alert-info">
+                <p>This study is terminated at <span class="date-time" th:text="${#temporals.format(study.closedDateTime, 'yyyy-MM-dd HH:mm:ss')}"></span>.</p>
+                <p>Please recreate study if you want reopen study.</p>
+                <a href="/study/setting/create" title="create study" class="text-link">Create</a>
+            </div>
+
+            <hr th:if="${study.published && !study.closed}" />
+
+            <div class="row" th:if="${study.published && !study.closed}">
+                <h2 class="col-sm-12">Recruit members</h2>
+            </div>
+            <form th:if="${study.published && !study.closed && !study.recruiting}"
+                  th:action="@{'/study/setting/recruit/'+ ${study.getPath()}}"
+                  method="POST" novalidate>
+                <input type="hidden" name="status" value="recruit" />
+                <div class="alert alert-primary" role="alert">
+                    <h4 th:if="${!study.canUpdateRecruiting()}"
+                        th:text="${'Can''t change recruit status. You should wait ' + study.getRemainAbleToUpdateRecruiting() + ' minutes' }"
+                        class="h4"
+                        ></h4>
+                    <h4 class="text-info">Now, People <span class="text-danger">can't</span> join this study group.</h4>
+                    <p>Sending notification for who wants to receive alarm related this study.</p>
+                    <p class="alert alert-warning" role="alert">
+                        Warning! Recruit status can be changed only 10 minutes after last change.<br />
+                        <small>Do not change recruit status because than makes people and members confused.</small>
+                    </p>
+                </div>
+                <div class="form-group">
+                    <button th:disabled="${!study.canUpdateRecruiting()}" class="btn btn-outline-primary btn-block" type="submit" aria-describedby="submitHelp">Recruit</button>
+                </div>
+            </form>
+            <form th:if="${study.published && !study.closed && study.recruiting}"
+                  th:action="@{'/study/setting/recruit/'+ ${study.getPath()}}"
+                  method="POST" novalidate>
+                <input type="hidden" name="status" value="block" />
+                <div class="alert alert-primary" role="alert">
+                    <h4 th:if="${!study.canUpdateRecruiting()}"
+                        th:text="${'Can''t change recruit status. You should wait ' + study.getRemainAbleToUpdateRecruiting() + ' minutes' }"
+                        class="h4"
+                    ></h4>
+                    <h4 class="text-info">Now, People <span class="text-success">can</span> join this study group.</h4>
+                    <p>Sending notification for who wants to receive alarm related this study.</p>
+                    <p class="alert alert-warning" role="alert">
+                        Warning! Recruit status can be changed only 10 minutes after last change.<br />
+                        <small>Do not change recruit status because than makes people and members confused.</small>
+                    </p>
+                </div>
+                <div class="form-group">
+                    <button th:disabled="${!study.canUpdateRecruiting()}" class="btn btn-outline-primary btn-block" type="submit" aria-describedby="submitHelp">Block</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+<footer th:replace="fragment.html :: footer"></footer>
+
+<th:block th:replace="fragment.html :: scripts(~{ :: .additionalS })">
+    <th:block class="additionalS">
+        <script>
+            'use strict';
+
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+
+            });
+        </script>
+    </th:block>
+</th:block>
+<th:block th:replace="fragment.html :: formValidationScript"></th:block>
+
+</body>
+</html>

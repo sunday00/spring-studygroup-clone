@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.io.File;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +29,9 @@ import java.util.stream.Collectors;
 })
 @NamedEntityGraph(name = "Study.withLocationsAndManagers", attributeNodes = {
         @NamedAttributeNode("locations"),
+        @NamedAttributeNode("managers")
+})
+@NamedEntityGraph(name = "Study.withManagers", attributeNodes = {
         @NamedAttributeNode("managers")
 })
 @Getter @Setter @EqualsAndHashCode(of = "id")
@@ -105,7 +109,15 @@ public class Study {
 
     private LocalDateTime recruitingUpdatedDateTime;
 
-    private boolean recruiting;
+    private boolean recruiting = false;
+
+    public boolean canUpdateRecruiting(){
+        return this.published && this.recruitingUpdatedDateTime == null || this.recruitingUpdatedDateTime.isBefore(LocalDateTime.now().minusMinutes(10));
+    }
+
+    public Long getRemainAbleToUpdateRecruiting(){
+        return LocalDateTime.now().until(this.recruitingUpdatedDateTime.plusMinutes(10), ChronoUnit.MINUTES);
+    }
 
     private boolean published = false;
 

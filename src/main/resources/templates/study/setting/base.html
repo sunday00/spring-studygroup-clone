@@ -8,7 +8,7 @@
     <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'banner'}? active" href="#" th:href="@{'/study/setting/banner/' + ${path}}">banner</a>
     <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'tags'}? active" href="#" th:href="@{'/study/setting/tags/' + ${path}}">tags</a>
     <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'locations'}? active" href="#" th:href="@{'/study/setting/locations/' + ${path}}">locations</a>
-    <a class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'study'}? active" href="#" th:href="@{/study/setting/study}">study</a>
+    <a class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'status'}? active" href="#" th:href="@{'/study/setting/status/' + ${path}}">status</a>
 </div>
 
 </html>
