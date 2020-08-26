@@ -1,6 +1,5 @@
 package lec.spring.studygroupclone.helpers.study;
 
-import lec.spring.studygroupclone.Models.Study;
 import lec.spring.studygroupclone.Repositories.StudyRepository;
 import lec.spring.studygroupclone.dataMappers.StudySetting;
 import lombok.RequiredArgsConstructor;
@@ -8,9 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor

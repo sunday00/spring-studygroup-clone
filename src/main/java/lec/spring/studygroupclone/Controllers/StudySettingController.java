@@ -227,7 +227,7 @@ public class StudySettingController {
 
     @PostMapping(STUDY_SETTING_PATH_VIEW + "/{path}")
     public String pathModify (@CurrentUser Account account, @PathVariable String path, @Valid StudySetting studySetting, Errors errors,
-                              Model model, RedirectAttributes redirectAttributes) {
+                              RedirectAttributes redirectAttributes) {
         Study study = studyService.getStudyByPath(account, path, "manager");
         if(errors.hasErrors() && errors.getFieldError("path") != null){
             redirectAttributes.addFlashAttribute("studyPathError", errors.getFieldError("path").getDefaultMessage());
@@ -243,7 +243,7 @@ public class StudySettingController {
 
     @PostMapping(STUDY_SETTING_TITLE_VIEW + "/{path}")
     public String titleModify (@CurrentUser Account account, @PathVariable String path, @Valid StudySetting studySetting, Errors errors,
-                              Model model, RedirectAttributes redirectAttributes) {
+                              RedirectAttributes redirectAttributes) {
         Study study = studyService.getStudyByPath(account, path, "manager");
         if(errors.hasErrors() && errors.getFieldError("title") != null){
             redirectAttributes.addFlashAttribute("titleError", errors.getFieldError("title").getDefaultMessage());
