@@ -150,4 +150,14 @@ public class StudyService {
 
         return nowStatus;
     }
+
+    public void updatePath(Study study, String path) {
+        //TODO:: send path modified mail to members.
+        study.setPath(path);
+    }
+
+    public void updateTitle(Study study, String title) {
+        //TODO:: send path modified mail to members.
+        study.setTitle(title);
+    }
 }

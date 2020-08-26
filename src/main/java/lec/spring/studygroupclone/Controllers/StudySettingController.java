@@ -37,6 +37,8 @@ public class StudySettingController {
     public static final String STUDY_SETTING_LOCATION_VIEW = "/study/setting/locations";
     public static final String STUDY_SETTING_STATUS_VIEW = "/study/setting/status";
     public static final String STUDY_SETTING_RECRUIT_VIEW = "/study/setting/recruit";
+    public static final String STUDY_SETTING_PATH_VIEW = "/study/setting/path";
+    public static final String STUDY_SETTING_TITLE_VIEW = "/study/setting/title";
 
     private final ModelMapper modelMapper;
     private final ObjectMapper objectMapper;
@@ -200,6 +202,7 @@ public class StudySettingController {
     public String status (@CurrentUser Account account, @PathVariable String path, Model model) {
         Study study = studyService.getStudyByPath(account, path);
         model.addAttribute(account);
+        model.addAttribute(modelMapper.map(study, StudySetting.class));
         model.addAttribute(study);
         return STUDY_SETTING_STATUS_VIEW;
     }
@@ -220,6 +223,38 @@ public class StudySettingController {
 
         redirectAttributes.addFlashAttribute("info", "NOW the study is " + nowStatus);
         return "redirect:" + STUDY_SETTING_STATUS_VIEW + "/" + path;
+    }
+
+    @PostMapping(STUDY_SETTING_PATH_VIEW + "/{path}")
+    public String pathModify (@CurrentUser Account account, @PathVariable String path, @Valid StudySetting studySetting, Errors errors,
+                              Model model, RedirectAttributes redirectAttributes) {
+        Study study = studyService.getStudyByPath(account, path, "manager");
+        if(errors.hasErrors() && errors.getFieldError("path") != null){
+            redirectAttributes.addFlashAttribute("studyPathError", errors.getFieldError("path").getDefaultMessage());
+            return "redirect:" + STUDY_SETTING_STATUS_VIEW + "/" + path;
+        }
+
+        studyService.updatePath(study, studySetting.getPath());
+
+        redirectAttributes.addFlashAttribute("info", "Path is modified");
+
+        return "redirect:" + STUDY_SETTING_STATUS_VIEW + "/" + studySetting.getPath();
+    }
+
+    @PostMapping(STUDY_SETTING_TITLE_VIEW + "/{path}")
+    public String titleModify (@CurrentUser Account account, @PathVariable String path, @Valid StudySetting studySetting, Errors errors,
+                              Model model, RedirectAttributes redirectAttributes) {
+        Study study = studyService.getStudyByPath(account, path, "manager");
+        if(errors.hasErrors() && errors.getFieldError("title") != null){
+            redirectAttributes.addFlashAttribute("titleError", errors.getFieldError("title").getDefaultMessage());
+            return "redirect:" + STUDY_SETTING_STATUS_VIEW + "/" + path;
+        }
+
+        studyService.updateTitle(study, studySetting.getTitle());
+
+        redirectAttributes.addFlashAttribute("info", "Study name is modified");
+
+        return "redirect:" + STUDY_SETTING_STATUS_VIEW + "/" + studySetting.getPath();
     }
 
 }

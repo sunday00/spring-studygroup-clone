@@ -34,7 +34,7 @@
                         <input id="path" type="text" th:field="*{path}" class="form-control"
                                placeholder="ex) study-path" aria-describedby="pathHelp" required min="3" max="25">
                         <small id="pathHelp" class="form-text text-muted">
-                            make path using 3-25 characters(digit, _, -, alphabet) for accessing your study ex) /study/<b>study-path</b>
+                            make path using 3-25 characters(digit, _, -, alphabet) for accessing your study ex) /study/<Strong>study-path</Strong>
                         </small>
                         <small class="invalid-feedback">don't skip this.</small>
                         <small class="form-text text-danger" th:if="${#fields.hasErrors('path')}" th:errors="*{path}">Path is not valid.</small>
@@ -45,7 +45,7 @@
                         <input id="title" type="text" th:field="*{title}" class="form-control"
                                placeholder="SpringBoot" aria-describedby="titleHelp" required max="100">
                         <small id="titleHelp" class="form-text text-muted">
-                            Do not whitespace with study name in 100 letters.
+                            Do not skip study name, and less then 100 letters.
                         </small>
                         <small class="invalid-feedback">don't skip this.</small>
                         <small class="form-text text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title is not valid.</small>

@@ -14,11 +14,11 @@ import javax.validation.constraints.Pattern;
 public class StudySetting {
 
     @NotBlank
-    @Pattern(regexp = "^[a-zA-Z0-9-_]{3,25}$")
+    @Pattern(regexp = "^[a-zA-Z0-9-_]{3,25}$", message = "Make sure 3-25 alphabets, digits, - and _.")
     private String path;
 
     @NotBlank
-    @Pattern(regexp = "^[a-zA-Z0-9-_\\s]{1,255}$")
+    @Pattern(regexp = "^[a-zA-Z0-9-_\\s]{1,255}$", message = "Too short, too long or not allow weird character.")
     private String title;
 
     @NotBlank

@@ -95,7 +95,7 @@
                 </div>
             </form>
             <form th:if="${study.published && !study.closed && study.recruiting}"
-                  th:action="@{'/study/setting/recruit/'+ ${study.getPath()}}"
+                  th:action="@{'/study/setting/recruit/' + ${study.getPath()}}"
                   method="POST" novalidate>
                 <input type="hidden" name="status" value="block" />
                 <div class="alert alert-primary" role="alert">
@@ -114,6 +114,52 @@
                     <button th:disabled="${!study.canUpdateRecruiting()}" class="btn btn-outline-primary btn-block" type="submit" aria-describedby="submitHelp">Block</button>
                 </div>
             </form>
+
+            <hr th:if="${!study.published && !study.closed}"/>
+
+            <div class="row" th:if="${!study.published && !study.closed}">
+                <h2 class="col-sm-12">Modify path</h2>
+                <form class="col-sm-12 needs-validation" th:object="${studySetting}" th:action="@{'/study/setting/path/' + ${study.getPath()}}" method="post" novalidate>
+                    <div class="alert alert-warning" role="alert">
+                        Previous path is not work when you change the study path.
+                    </div>
+                    <div class="form-group">
+                        <input id="path" type="text" th:field="*{path}" class="form-control"
+                               placeholder="ex) study-path" aria-describedby="pathHelp" required>
+                        <small id="pathHelp" class="form-text text-muted">
+                            make path using 3-25 characters(digit, _, -, alphabet) for accessing your study ex) /study/<strong>study-path</strong>
+                        </small>
+                        <small class="invalid-feedback">Do not skip this input.</small>
+                        <small class="form-text text-danger" th:if="${studyPathError}" th:text="${studyPathError}">Path Error</small>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-warning" type="submit" aria-describedby="submitHelp">Modify</button>
+                    </div>
+                </form>
+            </div>
+
+            <hr />
+
+            <div class="row">
+                <h2 class="col-sm-12">Modify Study Name</h2>
+                <form class="col-sm-12 needs-validation" th:object="${studySetting}" th:action="@{'/study/setting/title/' + ${study.getPath()}}" method="post" novalidate>
+                    <div class="alert alert-info" role="alert">
+                        Modify study name.
+                    </div>
+                    <div class="form-group">
+                        <input id="title" type="text" th:field="*{title}" class="form-control"
+                               placeholder="ex) studyTitle" aria-describedby="titleHelp" required>
+                        <small id="titleHelp" class="form-text text-muted">
+                            Do not skip study name, and less then 100 letters.
+                        </small>
+                        <small class="invalid-feedback">Do not skip this input.</small>
+                        <small class="form-text text-danger" th:if="${titleError}" th:text="${titleError}">name Error</small>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">Modify</button>
+                    </div>
+                </form>
+            </div>
 
         </div>
     </div>

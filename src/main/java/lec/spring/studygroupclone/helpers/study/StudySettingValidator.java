@@ -1,5 +1,6 @@
 package lec.spring.studygroupclone.helpers.study;
 
+import lec.spring.studygroupclone.Models.Study;
 import lec.spring.studygroupclone.Repositories.StudyRepository;
 import lec.spring.studygroupclone.dataMappers.StudySetting;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +36,8 @@ public class StudySettingValidator implements Validator{
             errors.rejectValue("path", "wrong.path", "This path is taken others");
         }
 
+        if( study.getPath() != null && studyRepository.existsByPath(study.getPath()) && uri.equals("/study/setting/path/" + uriSplit[uriSplit.length - 1]) ){
+            errors.rejectValue("path", "wrong.path", "This path is taken others");
+        }
     }
 }
