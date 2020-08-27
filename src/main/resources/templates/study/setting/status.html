@@ -161,6 +161,20 @@
                 </form>
             </div>
 
+            <hr th:if="${!study.published || study.closed}" />
+
+            <div class="row" th:if="${!study.published || study.closed}">
+                <h2 class="col-sm-12">Delete study</h2>
+                <form class="col-sm-12 needs-validation" th:object="${studySetting}" th:action="@{'/study/setting/remove/' + ${study.getPath()}}" method="post" novalidate>
+                    <div class="alert alert-danger" role="alert">
+                        Make sure the study is no more need. Removed study can't access anymore.
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-danger" type="submit" aria-describedby="submitHelp">DELETE</button>
+                    </div>
+                </form>
+            </div>
+
         </div>
     </div>
 

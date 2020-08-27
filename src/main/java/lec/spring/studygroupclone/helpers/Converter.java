@@ -19,7 +19,7 @@ public class Converter {
     public static String b64ToFile(Account account, Profile profile) throws IOException{
         if( profile.getProfileImage() == null || profile.getProfileImage().equals("") ) return null;
 
-        String profileImagePath = "/accounts/" + account.getNickname() + ".png";
+        String profileImagePath = "/accounts/" + account.getId() + ".png";
         String[] str_imgs = profile.getProfileImage().split(",");
 
         if( !str_imgs[0].equals("data:image/png;base64") ) return profileImagePath;
@@ -33,7 +33,7 @@ public class Converter {
     }
 
     public static String b64ToFile(Study study, String image) throws IOException{
-        String studyImagePath = "/studies/" + study.getPath() + ".png";
+        String studyImagePath = "/studies/" + study.getId() + ".png";
         String[] str_imgs = image.split(",");
 
         byte[] img = Base64.getDecoder().decode(str_imgs[1]);

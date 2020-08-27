@@ -25,6 +25,7 @@ public class StudyController {
 
     public static final String STUDY_READ_SHOW_VIEW = "/study/read/show";
     public static final String STUDY_READ_MEMBERS_VIEW = "/study/read/members";
+    public static final String STUDY_JOIN_VIEW = "/study/read/join";
 
     private final StudyService studyService;
     private final ModelMapper modelMapper;
@@ -48,4 +49,10 @@ public class StudyController {
         model.addAttribute(studyService.getStudyByPath(path));
         return STUDY_READ_MEMBERS_VIEW;
     }
+
+    @PostMapping(STUDY_JOIN_VIEW)
+    public String join() {
+        return null;
+    }
+
 }

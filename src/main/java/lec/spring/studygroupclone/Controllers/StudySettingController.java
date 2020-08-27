@@ -39,6 +39,7 @@ public class StudySettingController {
     public static final String STUDY_SETTING_RECRUIT_VIEW = "/study/setting/recruit";
     public static final String STUDY_SETTING_PATH_VIEW = "/study/setting/path";
     public static final String STUDY_SETTING_TITLE_VIEW = "/study/setting/title";
+    public static final String STUDY_SETTING_DELETE_VIEW = "/study/setting/remove";
 
     private final ModelMapper modelMapper;
     private final ObjectMapper objectMapper;
@@ -255,6 +256,14 @@ public class StudySettingController {
         redirectAttributes.addFlashAttribute("info", "Study name is modified");
 
         return "redirect:" + STUDY_SETTING_STATUS_VIEW + "/" + studySetting.getPath();
+    }
+
+    @PostMapping(STUDY_SETTING_DELETE_VIEW + "/{path}")
+    public String remove(@CurrentUser Account account, @PathVariable String path, RedirectAttributes redirectAttributes){
+        Study study = studyService.getStudyByPath(account, path, "manager");
+        studyService.removeStudy(study);
+
+        return "redirect:/";
     }
 
 }

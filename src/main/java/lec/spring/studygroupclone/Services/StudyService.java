@@ -159,4 +159,8 @@ public class StudyService {
         //TODO:: send path modified mail to members.
         study.setTitle(title);
     }
+
+    public void removeStudy(Study study) {
+        studyRepository.delete(study);
+    }
 }
