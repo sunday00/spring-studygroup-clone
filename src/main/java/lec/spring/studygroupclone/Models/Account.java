@@ -1,5 +1,6 @@
 package lec.spring.studygroupclone.Models;
 
+import lec.spring.studygroupclone.Services.StudyService;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 

@@ -67,7 +67,7 @@
                         <span th:text="${#authentication.getPrincipal().getAccount().getNickname()}">Username</span>
                     </h6>
                     <a class="dropdown-item" th:href="@{'/profile/read/' + ${#authentication.getPrincipal().getAccount().getNickname()}}">profile</a>
-                    <a class="dropdown-item" >studies</a>
+                    <a class="dropdown-item" th:href="@{'/profile/read/' + ${#authentication.getPrincipal().getAccount().getNickname()} + '#v-pills-study'}">study</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" th:href="@{'/profile/edit'}">configuration</a>
                     <form class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">

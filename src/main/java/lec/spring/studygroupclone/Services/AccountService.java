@@ -1,12 +1,12 @@
 package lec.spring.studygroupclone.Services;
 
 import java.io.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 import lec.spring.studygroupclone.Models.Location;
+import lec.spring.studygroupclone.Models.Study;
 import lec.spring.studygroupclone.Models.Tag;
+import lec.spring.studygroupclone.Repositories.StudyRepository;
 import lec.spring.studygroupclone.helpers.Converter;
 import lec.spring.studygroupclone.helpers.account.SendEmail;
 import org.modelmapper.ModelMapper;
@@ -34,6 +34,7 @@ public class AccountService implements UserDetailsService {
 
     //depend other class
     private final AccountRepository accountRepository;
+    private final StudyRepository studyRepository;
     private final ModelMapper modelMapper;
     private final SendEmail sendEmail;
 
@@ -183,5 +184,12 @@ public class AccountService implements UserDetailsService {
         result.put("info", "Sent login token. Check your email box.");
 
         return result;
+    }
+
+    public Set<Study> getStudies(Account account){
+        HashSet<Study> studies = new HashSet<>();
+        studies.addAll( studyRepository.findAllByManagersContains(account) );
+        studies.addAll( studyRepository.findAllByMembersContains(account) );
+        return studies;
     }
 }

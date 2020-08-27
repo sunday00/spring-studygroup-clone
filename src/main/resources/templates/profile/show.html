@@ -81,6 +81,19 @@
                 </div>
                 <div class="tab-pane fade" id="v-pills-study" role="tabpanel" aria-labelledby="v-pills-study-tab">
                     <h2>STUDY</h2>
+                    <ul th:if="${studies.size() != 0}">
+                        <li th:each="study: ${studies}">
+                            <p>
+                                <a th:href="@{'/study/read/show/' + ${study.path}}" th:text="${study.getTitle()}"></a>
+                            </p>
+                        </li>
+                    </ul>
+                    <p th:if="${studies.size() == 0 && isYou}">
+                        No studies that you joined. Search some studies or <a href="/study/setting/create">create study yourself.</a>
+                    </p>
+                    <p th:if="${studies.size() == 0 && !isYou}">
+                        Does Not joined any study.
+                    </p>
                 </div>
             </div>
         </div>
@@ -97,13 +110,19 @@
 
 <footer th:replace="fragment.html :: footer"></footer>
 
-<th:block th:replace="fragment.html :: scripts(~{  })"></th:block>
-<script type="application/javascript">
-    (function () {
-        'use strict';
+<th:block th:replace="fragment.html :: scripts(~{ :: .additionalS })">
+    <th:block class="additionalS">
+        <script type="application/javascript">
+            (function () {
+                'use strict';
 
-    }());
-</script>
+                if( location.hash === "#v-pills-study" ){
+                    $('#v-pills-study-tab').click();
+                }
+            }());
+        </script>
+    </th:block>
+</th:block>
 
 </body>
 </html>

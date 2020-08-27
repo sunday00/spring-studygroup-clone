@@ -7,6 +7,7 @@ import lec.spring.studygroupclone.Models.Location;
 import lec.spring.studygroupclone.Models.Tag;
 import lec.spring.studygroupclone.Services.AccountService;
 import lec.spring.studygroupclone.Services.LocationService;
+import lec.spring.studygroupclone.Services.StudyService;
 import lec.spring.studygroupclone.Services.TagService;
 import lec.spring.studygroupclone.dataMappers.Profile;
 import lec.spring.studygroupclone.helpers.account.CurrentUser;
@@ -54,6 +55,7 @@ public class ProfileController {
             findMember = accountService.getAccount(nickname);
             model.addAttribute(findMember);
             model.addAttribute("isYou", findMember.equals(account));
+            model.addAttribute("studies", accountService.getStudies(findMember));
         } catch (IllegalArgumentException exception){
           model.addAttribute("error", nickname + " is not a member");
         }
