@@ -34,6 +34,9 @@ import java.util.stream.Collectors;
 @NamedEntityGraph(name = "Study.withManagers", attributeNodes = {
         @NamedAttributeNode("managers")
 })
+@NamedEntityGraph(name = "Study.withMembers", attributeNodes = {
+        @NamedAttributeNode("members")
+})
 @Getter @Setter @EqualsAndHashCode(of = "id")
 @Builder @AllArgsConstructor @NoArgsConstructor
 public class Study {
@@ -127,6 +130,18 @@ public class Study {
 
     public void addManager(Account account) {
         this.managers.add(account);
+    }
+
+    public void removeManager(Account account) {
+        this.managers.remove(account);
+    }
+
+    public void addMember(Account account) {
+        this.members.add(account);
+    }
+
+    public void removeMember(Account account) {
+        this.members.remove(account);
     }
 
     public boolean isJoinable(CurrentAccount currentAccount) {

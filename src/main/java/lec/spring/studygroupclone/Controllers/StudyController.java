@@ -26,6 +26,7 @@ public class StudyController {
     public static final String STUDY_READ_SHOW_VIEW = "/study/read/show";
     public static final String STUDY_READ_MEMBERS_VIEW = "/study/read/members";
     public static final String STUDY_JOIN_VIEW = "/study/read/join";
+    public static final String STUDY_LEAVE_VIEW = "/study/read/leave";
 
     private final StudyService studyService;
     private final ModelMapper modelMapper;
@@ -50,9 +51,18 @@ public class StudyController {
         return STUDY_READ_MEMBERS_VIEW;
     }
 
-    @PostMapping(STUDY_JOIN_VIEW)
-    public String join() {
-        return null;
+    @PostMapping(STUDY_JOIN_VIEW + "/{path}")
+    public String join(@CurrentUser Account account, @PathVariable String path, Model model) {
+        Study study = studyService.getStudyByPath(path);
+        studyService.addMember(study, account);
+        return "redirect:" + STUDY_READ_MEMBERS_VIEW + "/" + path;
+    }
+
+    @PostMapping(STUDY_LEAVE_VIEW + "/{path}")
+    public String leave(@CurrentUser Account account, @PathVariable String path, Model model) {
+        Study study = studyService.getStudyByPath(path);
+        studyService.removeMember(study, account);
+        return "redirect:" + STUDY_READ_SHOW_VIEW + "/" + path;
     }
 
 }

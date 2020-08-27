@@ -56,6 +56,9 @@ public class StudyService {
             case "manager":
                 study = studyRepository.findStudyWithManagersByPath(path);
                 break;
+            case "members":
+                study = studyRepository.findStudyWithMembersByPath(path);
+                break;
             default:
                 return this.getStudyByPath(account, path);
         }
@@ -162,5 +165,13 @@ public class StudyService {
 
     public void removeStudy(Study study) {
         studyRepository.delete(study);
+    }
+
+    public void addMember(Study study, Account account) {
+        study.addMember(account);
+    }
+
+    public void removeMember(Study study, Account account) {
+        study.removeMember(account);
     }
 }
