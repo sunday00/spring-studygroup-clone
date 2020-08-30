@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,10 +27,33 @@ public class EventService {
         eventRepository.findAll();
     }
 
-    public List<Event> getAllEventsByStudy(Study study) {
-        return eventRepository.findAllByStudy(study);
+    public HashMap<String, List<Event>> getAllEventsByStudy(Study study) {
+        HashMap<String, List<Event>> data = new HashMap<>();
+        List<Event> lists = eventRepository.findAllByStudyOrderByStartAt(study);
+        List<Event> comingEvents = new ArrayList<>();
+        List<Event> pastEvents = new ArrayList<>();
+
+        lists.forEach(list -> {
+            if( list.getStartAt().isBefore(LocalDateTime.now()) ) pastEvents.add(list);
+            else comingEvents.add(list);
+        });
+
+        data.put("all", lists);
+        data.put("coming", comingEvents);
+        data.put("past", pastEvents);
+
+        return data;
     }
 
+    public List<Event> getComingEventsByStudy(Study study) {
+        List<Event> lists = eventRepository.findAllWithStartAtBeforeNowByStudy(LocalDateTime.now(), study);
+        System.out.println(lists);
+        return null;
+    }
+
+    public List<Event> getPastEventsByStudy(Study study) {
+        return null;
+    }
 
     public Event create(Event event, Study study, Account account) {
         event.setAuthor(account);

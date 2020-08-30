@@ -47,9 +47,7 @@ public class EventController {
     public String index (@CurrentUser Account account, @PathVariable String path, Model model) {
         Study study = studyService.getStudyByPath(path);
         model.addAttribute(study);
-        model.addAttribute(new EventSetting());
         model.addAttribute("events", eventService.getAllEventsByStudy(study));
-
         return EVENT_INDEX_VIEW;
     }
 

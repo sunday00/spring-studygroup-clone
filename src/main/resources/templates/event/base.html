@@ -3,12 +3,10 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<div th:fragment="menu (currentMenu, path)" class="list-group mb-2">
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'lists'}? active" href="#" th:href="@{'/study/' + ${path} + '/events'}">lists</a>
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'banner'}? active" href="#" th:href="@{'/study/setting/banner/' + ${path}}">banner</a>
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'tags'}? active" href="#" th:href="@{'/study/setting/tags/' + ${path}}">tags</a>
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'locations'}? active" href="#" th:href="@{'/study/setting/locations/' + ${path}}">locations</a>
-    <a class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'status'}? active" href="#" th:href="@{'/study/setting/status/' + ${path}}">status</a>
+<div th:fragment="menu (currentMenu, path, cntComing, cntPast)" class="list-group mb-2">
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'lists'}? active" href="#" th:href="@{'/study/' + ${path} + '/events'}" th:text="${'all (' + (cntComing + cntPast) + ')'}"></a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'comming'}? active" href="#" th:href="@{'/study/' + ${path} + '/events/comming'}" th:text="${'coming (' + cntComing + ')'}"></a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'past'}? active" href="#" th:href="@{'/study/' + ${path} + '/events/past'}" th:text="${'past (' + cntPast + ')'}"></a>
 </div>
 
 </html>
