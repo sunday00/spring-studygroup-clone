@@ -20,7 +20,6 @@
 <div th:replace="fragment.html :: needEmailVerified"></div>
 
 <div th:replace="study/read/base.html :: banner"></div>
-<div th:replace="study/read/base.html :: menu(studyMenu='settings')"></div>
 
 <div class="container">
     <div th:replace="study/read/base.html :: info"></div>
@@ -65,7 +64,7 @@
 
                 <div class="form-group">
                     <label for="fullDescription">Details</label>
-                    <textarea id="fullDescription" type="textarea" th:field="*{fullDescription}" class="form-control"
+                    <textarea id="fullDescription" type="textarea" th:field="*{fullDescription}" class="editor form-control"
                               placeholder="Explain study as detail as you can." aria-describedby="fullDescriptionHelp" required></textarea>
                     <small id="fullDescriptionHelp" class="form-text text-muted">
                         please write detail like goal, schedule, way, textbook, specific person and etc.
@@ -92,7 +91,7 @@
         <script>
             $(function () {
                 $('[data-toggle="tooltip"]').tooltip();
-                $('#fullDescription').summernote({
+                $('.editor').summernote({
                     fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Noto Sans KR', 'Merriweather'],
                     placeholder: 'please write detail like goal, schedule, way, textbook, specific person and etc.',
                     tabsize: 2,

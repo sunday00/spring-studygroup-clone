@@ -1,5 +1,6 @@
 package lec.spring.studygroupclone.Models;
 
+import lec.spring.studygroupclone.helpers.event.EventType;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -9,11 +10,8 @@ import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 @EqualsAndHashCode(of = "id")
-@NoArgsConstructor
-@AllArgsConstructor
 public class Enrollment {
 
     @Id @GeneratedValue
@@ -30,4 +28,21 @@ public class Enrollment {
     private boolean accepted;
 
     private boolean attended;
+
+    public boolean isAcceptable(Event event){
+        return !this.isEnrollClosed(event) && !this.accepted && event.getEventType() == EventType.CONFIRMATIVE;
+    }
+
+    public boolean isDeniable(Event event){
+        return !this.isEnrollClosed(event) && this.accepted && event.getEventType() == EventType.CONFIRMATIVE;
+    }
+
+    public boolean isManageable(Event event){
+        return this.isAcceptable(event) || this.isDeniable(event);
+    }
+
+    private boolean isEnrollClosed(Event event) {
+        LocalDateTime closeEnrollTime = event.getEndEnrollmentAt();
+        return closeEnrollTime.isBefore(LocalDateTime.now());
+    }
 }

@@ -1,9 +1,11 @@
 package lec.spring.studygroupclone.Controllers;
 
+import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Models.Study;
 import lec.spring.studygroupclone.Repositories.AccountRepository;
 import lec.spring.studygroupclone.Repositories.StudyRepository;
 import lec.spring.studygroupclone.Repositories.TagRepository;
+import lec.spring.studygroupclone.config.AppConfig;
 import lec.spring.studygroupclone.dataMappers.StudySetting;
 import lec.spring.studygroupclone.helpers.account.WithFakeAccountForTest;
 import org.junit.jupiter.api.AfterEach;
@@ -59,6 +61,25 @@ class StudyControllerTest {
         return studyRepository.findByPath("example");
     }
 
+    Study createNewStudy(Account account) throws Exception {
+        Study study = new Study();
+        study.setTitle("Example study");
+        study.setPath("example");
+        study.setIntroduce("hello");
+        study.setFullDescription("this is test study");
+        study.addManager(account);
+
+        return studyRepository.save(study);
+    }
+
+    Account createNewAccount() throws Exception {
+        Account account = new Account();
+        account.setNickname("joker2");
+        account.setEmail("joker2@example2.com");
+        account.setPassword(AppConfig.passwordEncoder().encode("security"));
+        return accountRepository.save(account);
+    }
+
     @DisplayName("create study")
     @WithFakeAccountForTest(email = "abc@example.com")
     @Test
@@ -100,5 +121,31 @@ class StudyControllerTest {
 
         studyRepository.deleteAll();
     }
+
+    @DisplayName("join member")
+    @WithFakeAccountForTest(email = "abc@example.com")
+    @Test
+    void joinStudy() throws Exception {
+        Account author = this.createNewAccount();
+        this.createNewStudy(author);
+
+        Study study = studyRepository.findByPath("example");
+
+        Account me = accountRepository.findByEmail("abc@example.com");
+
+        assertFalse(study.getMembers().contains(me));
+
+        mockMvc.perform(post(StudyController.STUDY_JOIN_VIEW+"/example")
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection());
+
+        study = studyRepository.findByPath("example");
+
+        assertTrue(study.getMembers().contains(me));
+
+        studyRepository.deleteAll();
+    }
+
+
 
 }

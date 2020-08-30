@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Data
-@Getter
 @NoArgsConstructor
 public class StudySetting {
 

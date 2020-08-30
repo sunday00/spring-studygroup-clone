@@ -2,3 +2,8 @@
     width: 1.5rem;
     height: 1.5rem;
 }
+
+.no-style{
+    list-style: none;
+    text-decoration: none;
+}

@@ -1,9 +1,7 @@
 package lec.spring.studygroupclone.Services;
 
-import lec.spring.studygroupclone.Models.Account;
-import lec.spring.studygroupclone.Models.Location;
-import lec.spring.studygroupclone.Models.Study;
-import lec.spring.studygroupclone.Models.Tag;
+import lec.spring.studygroupclone.Models.*;
+import lec.spring.studygroupclone.Repositories.EventRepository;
 import lec.spring.studygroupclone.Repositories.StudyRepository;
 import lec.spring.studygroupclone.dataMappers.StudySetting;
 import lec.spring.studygroupclone.helpers.Converter;
@@ -15,13 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class StudyService {
     private final StudyRepository studyRepository;
+    private final EventRepository eventRepository;
     private final ModelMapper modelMapper;
 
     public Study create(Study study, Account account) {

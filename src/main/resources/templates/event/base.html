@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div th:fragment="menu (currentMenu, path)" class="list-group mb-2">
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'lists'}? active" href="#" th:href="@{'/study/' + ${path} + '/events'}">lists</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'banner'}? active" href="#" th:href="@{'/study/setting/banner/' + ${path}}">banner</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'tags'}? active" href="#" th:href="@{'/study/setting/tags/' + ${path}}">tags</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'locations'}? active" href="#" th:href="@{'/study/setting/locations/' + ${path}}">locations</a>
+    <a class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'status'}? active" href="#" th:href="@{'/study/setting/status/' + ${path}}">status</a>
+</div>
+
+</html>

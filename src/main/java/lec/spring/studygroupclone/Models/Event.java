@@ -2,6 +2,7 @@ package lec.spring.studygroupclone.Models;
 
 import lec.spring.studygroupclone.helpers.event.EventType;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
@@ -24,7 +25,7 @@ public class Event {
     private Account author;
 
     @Column(nullable = false)
-    @Pattern(regexp = "^[a-zA-Z0-9-_]{3,25}$", message = "It should be 3-25 characters using alphabet, digit, dash(-) or underscore(_) only.")
+    @Length(min = 3, max = 50, message = "It should be 3-50 characters.")
     private String title;
 
     @Lob
@@ -37,10 +38,10 @@ public class Event {
     private LocalDateTime endEnrollmentAt;
 
     @Column(nullable = false)
-    private LocalDateTime start;
+    private LocalDateTime startAt;
 
     @Column(nullable = false)
-    private LocalDateTime end;
+    private LocalDateTime endAt;
 
     @Column(nullable = false)
     private Integer limitEnrollment;
@@ -50,5 +51,15 @@ public class Event {
 
     @Enumerated(EnumType.STRING)
     private EventType eventType;
+
+    public boolean isEnrolled(Account account){
+        for ( Enrollment e : this.enrollments ){
+            if( e.getAccount().equals(account) ){
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 }

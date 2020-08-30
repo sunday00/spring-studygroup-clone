@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragment.html :: head(~{ :: .additional })">
+    <th:block class="additional">
+        <link rel="stylesheet" href="/style.css">
+        <style>
+            #study-logo img {
+                max-height: 200px;
+            }
+        </style>
+    </th:block>
+</head>
+
+<body class="bg-light">
+<nav th:replace="fragment.html :: nav"></nav>
+
+<div th:replace="fragment.html :: needEmailVerified"></div>
+
+<div th:replace="study/read/base.html :: banner"></div>
+
+<div class="container">
+    <div th:replace="study/read/base.html :: info"></div>
+    <div th:replace="study/read/base.html :: menu(studyMenu='events')"></div>
+
+    <div class="row mt-3 justify-content-center">
+        <div class="col-3">
+            <div th:replace="event/base.html :: menu(currentMenu='lists', path=${study.getPath()})"></div>
+        </div>
+        <div class="col-7">
+            <div th:if="${info}" class="alert alert-info alert-dismissible fade show mt-3 w-full" role="alert">
+                <span th:text="${info}">info</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="needs-validation" th:action="@{'/study/setting/edit/' + ${study.getPath()}}"
+                  th:object="${studySetting}" th:method="POST" novalidate>
+                <ul>
+                    <li class="mt-2 mb-3 no-style">
+                        <a th:if="${study.isManager(#authentication.principal)}"
+                           th:href="@{'/study/' + ${study.getPath()} + '/event/create'}" class="btn btn-info">
+                            Create event for this study.
+                        </a>
+                    </li>
+                    <li th:each="event : ${events}">
+                        <a th:href="@{'/study/' + ${study.path} + '/event/show/' + ${event.id}}" th:text="${event.title}"></a>
+                    </li>
+                    <li th:if="${events.size() == 0}">
+                        <p>No events yet.</p>
+                    </li>
+                </ul>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<footer th:replace="fragment.html :: footer"></footer>
+
+<th:block th:replace="fragment.html :: scripts(~{ :: .additionalS })">
+    <th:block class="additionalS">
+        <script>
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+        </script>
+    </th:block>
+</th:block>
+
+</body>
+</html>
