@@ -34,7 +34,7 @@ public class EventService {
         List<Event> pastEvents = new ArrayList<>();
 
         lists.forEach(list -> {
-            if( list.getStartAt().isBefore(LocalDateTime.now()) ) pastEvents.add(list);
+            if( list.getEndAt().isBefore(LocalDateTime.now()) ) pastEvents.add(list);
             else comingEvents.add(list);
         });
 
@@ -45,14 +45,26 @@ public class EventService {
         return data;
     }
 
-    public List<Event> getComingEventsByStudy(Study study) {
-        List<Event> lists = eventRepository.findAllWithStartAtBeforeNowByStudy(LocalDateTime.now(), study);
-        System.out.println(lists);
-        return null;
+    public HashMap<String, Object> getComingEventsByStudy(Study study) {
+        HashMap<String, Object> data = new HashMap<>();
+        Integer cntPast = eventRepository.countByEndAtBeforeAndStudy(LocalDateTime.now(), study);
+        List<Event> list = eventRepository.findAllWithEndAtAfterNowByStudy(LocalDateTime.now(), study);
+
+        data.put("cntPast", cntPast);
+        data.put("coming", list);
+
+        return data;
     }
 
-    public List<Event> getPastEventsByStudy(Study study) {
-        return null;
+    public HashMap<String, Object> getPastEventsByStudy(Study study) {
+        HashMap<String, Object> data = new HashMap<>();
+        Integer cntComing = eventRepository.countByEndAtAfterAndStudy(LocalDateTime.now(), study);
+        List<Event> list = eventRepository.findAllWithEndAtBeforeNowByStudy(LocalDateTime.now(), study);
+
+        data.put("cntComing", cntComing);
+        data.put("past", list);
+
+        return data;
     }
 
     public Event create(Event event, Study study, Account account) {

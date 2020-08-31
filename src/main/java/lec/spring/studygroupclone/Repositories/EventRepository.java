@@ -24,6 +24,18 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findAllByStudyOrderByStartAt(Study study);
 
     @Transactional(readOnly = true)
-    @Query("SELECT e FROM Event e WHERE e.startAt <= :now AND e.study = :study")
-    List<Event> findAllWithStartAtBeforeNowByStudy(@Param("now") LocalDateTime now, @Param("study") Study study);
+    @EntityGraph(value = "Event.withEnrollments", type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT e FROM Event e WHERE e.endAt <= :now AND e.study = :study")
+    List<Event> findAllWithEndAtBeforeNowByStudy(LocalDateTime now, Study study);
+
+    @Transactional(readOnly = true)
+    @EntityGraph(value = "Event.withEnrollments", type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT e FROM Event e WHERE e.endAt >= :now AND e.study = :study")
+    List<Event> findAllWithEndAtAfterNowByStudy(LocalDateTime now, Study study);
+
+    @Transactional(readOnly = true)
+    Integer countByEndAtAfterAndStudy(LocalDateTime now, Study study);
+
+    @Transactional(readOnly = true)
+    Integer countByEndAtBeforeAndStudy(LocalDateTime now, Study study);
 }

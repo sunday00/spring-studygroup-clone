@@ -5,7 +5,7 @@
 
 <div th:fragment="menu (currentMenu, path, cntComing, cntPast)" class="list-group mb-2">
     <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'lists'}? active" href="#" th:href="@{'/study/' + ${path} + '/events'}" th:text="${'all (' + (cntComing + cntPast) + ')'}"></a>
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'comming'}? active" href="#" th:href="@{'/study/' + ${path} + '/events/comming'}" th:text="${'coming (' + cntComing + ')'}"></a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'comming'}? active" href="#" th:href="@{'/study/' + ${path} + '/events/coming'}" th:text="${'coming (' + cntComing + ')'}"></a>
     <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'past'}? active" href="#" th:href="@{'/study/' + ${path} + '/events/past'}" th:text="${'past (' + cntPast + ')'}"></a>
 </div>
 

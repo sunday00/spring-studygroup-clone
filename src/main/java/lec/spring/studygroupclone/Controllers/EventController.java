@@ -51,6 +51,22 @@ public class EventController {
         return EVENT_INDEX_VIEW;
     }
 
+    @GetMapping("/events/coming")
+    public String indexComing (@CurrentUser Account account, @PathVariable String path, Model model) {
+        Study study = studyService.getStudyByPath(path);
+        model.addAttribute(study);
+        model.addAttribute("events", eventService.getComingEventsByStudy(study));
+        return "/event/coming";
+    }
+
+    @GetMapping("/events/past")
+    public String indexPast (@CurrentUser Account account, @PathVariable String path, Model model) {
+        Study study = studyService.getStudyByPath(path);
+        model.addAttribute(study);
+        model.addAttribute("events", eventService.getPastEventsByStudy(study));
+        return "/event/past";
+    }
+
     @GetMapping(EVENT_CREATE_VIEW)
     public String create (@CurrentUser Account account, @PathVariable String path, Model model) {
         Study study = studyService.getStudyByPath(account, path, "manager");

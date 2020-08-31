@@ -40,6 +40,10 @@ public class Event {
     @Column(nullable = false)
     private LocalDateTime endEnrollmentAt;
 
+    public boolean isClosed(){
+        return this.endEnrollmentAt.isBefore(LocalDateTime.now());
+    }
+
     @Column(nullable = false)
     private LocalDateTime startAt;
 
@@ -51,6 +55,10 @@ public class Event {
 
     @OneToMany(mappedBy = "event")
     private List<Enrollment> enrollments;
+
+    public int remainEnroll(){
+        return this.limitEnrollment - enrollments.size();
+    }
 
     @Enumerated(EnumType.STRING)
     private EventType eventType;

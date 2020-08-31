@@ -27,12 +27,12 @@
 
     <div class="row mt-3 justify-content-center">
         <div class="col-3">
-            <div th:replace="event/base.html :: menu(currentMenu='lists', path=${study.getPath()},
-             cntComing=${events.get('coming').size()}, cntPast=${events.get('past').size()})"></div>
+            <div th:replace="event/base.html :: menu(currentMenu='coming', path=${study.getPath()},
+             cntComing=${events.get('cntComing')}, cntPast=${events.get('past').size()})"></div>
         </div>
         <div class="col-7 row row-cols-1 row-cols-md-2">
-            <div th:if="${events.get('coming').size() == 0}" class="col">No events yet.</div>
-            <div class="col mb-4 pr-0" th:each="event: ${events.get('coming')}">
+            <div th:if="${events.get('past').size() == 0}" class="col">No events yet.</div>
+            <div class="col mb-4 pr-0" th:each="event: ${events.get('past')}">
                 <div class="card">
                     <div class="card-header">
                         <span th:text="${event.title}">title</span>
@@ -56,36 +56,6 @@
             </div>
         </div>
     </div>
-    <div class="row mt-1 justify-content-center">
-        <div class="col-3"></div>
-        <div class="col-7">
-            <h4>Past Events</h4>
-            <table th:if="${events.get('past').size() > 0}" class="table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">End At</th>
-                    <th scope="col"></th>
-                </tr>
-                </thead>
-                <tbody th:each="event: ${events.get('past')}">
-                <tr>
-                    <th scope="row" th:text="${eventStat.count}">1</th>
-                    <td th:text="${event.title}">Title</td>
-                    <td>
-                        <span class="date-time" th:text="${event.endAt}"></span>
-                        (<span class="fromNow" th:text="${event.endAt}"></span>)
-                    </td>
-                    <td>
-                        <a href="#" th:href="@{'/study/' + ${study.path} + '/event/show/' + ${event.id}}" class="card-link">Detail</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
 </div>
 
 <footer th:replace="fragment.html :: footer"></footer>
