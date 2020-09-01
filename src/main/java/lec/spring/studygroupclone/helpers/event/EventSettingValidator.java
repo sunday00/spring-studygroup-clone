@@ -2,6 +2,7 @@ package lec.spring.studygroupclone.helpers.event;
 
 import lec.spring.studygroupclone.Repositories.EventRepository;
 import lec.spring.studygroupclone.dataMappers.EventSetting;
+import lec.spring.studygroupclone.helpers.PathAndUri;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 public class EventSettingValidator implements Validator {
 
     private final EventRepository eventRepository;
+    private final PathAndUri pathAndUri;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -37,6 +39,10 @@ public class EventSettingValidator implements Validator {
             errors.rejectValue("endAt", "wrong.dateTime", "Do not select more previous then start of event.");
         }
 
+        pathAndUri.setUri();
+        if( pathAndUri.getMode().equals("edit") && isModifiedLimitBiggerThenExists(eventSetting) ){
+            errors.rejectValue("limitEnrollment", "wrong.int", "Can't shrink the value of Limitation enrollments.");
+        }
 
     }
 
@@ -52,5 +58,9 @@ public class EventSettingValidator implements Validator {
     private boolean isEndTimeValid(EventSetting eventSetting){
         return eventSetting.getEndAt().isBefore(eventSetting.getStartAt())
                 || eventSetting.getEndAt().isBefore(LocalDateTime.now());
+    }
+
+    private boolean isModifiedLimitBiggerThenExists(EventSetting eventSetting){
+        return eventRepository.findById( Long.parseLong(pathAndUri.getLastPath()) ).orElseThrow(NullPointerException::new).getLimitEnrollment() > eventSetting.getLimitEnrollment();
     }
 }

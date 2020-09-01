@@ -9,4 +9,102 @@
     <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'past'}? active" href="#" th:href="@{'/study/' + ${path} + '/events/past'}" th:text="${'past (' + cntPast + ')'}"></a>
 </div>
 
+<th:block th:fragment="form(mode, path, action)">
+    <form class="needs-validation row" th:object="${eventSetting}"
+          th:action="@{${action}}"
+          method="post" novalidate>
+
+        <div class="form-group col-12 mt-3">
+            <label for="title">Event name</label>
+            <input id="title" type="text" th:field="*{title}" class="form-control"
+                   placeholder="ex) first meet in Dae-gu!" aria-describedby="titleHelp" required>
+            <small id="titleHelp" class="form-text text-muted">
+                Insert event name for the study.
+            </small>
+            <small class="invalid-feedback">Do not skip this input. Name should be 3-50 letters.</small>
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Error</small>
+        </div>
+
+        <div class="form-group col-sm-6 mt-3" th:if="${mode=='create'}">
+            <label for="eventType">Gather type</label>
+            <select th:field="*{eventType}"  class="custom-select mr-sm-2" id="eventType" aria-describedby="eventTypeHelp">
+                <option th:value="FCFS">A. First Come First Served</option>
+                <option th:value="CONFIRMATIVE">B. Need Confirm from manager</option>
+            </select>
+            <small id="eventTypeHelp" class="form-text text-muted">
+                <span>A. type makes automatically admit all of the applying until member limit reaches full.</span>
+                <span>Another way, when you prefer managers check each applying, you should select B.</span>
+            </small>
+        </div>
+
+        <div th:class="'form-group mt-3' + ${mode=='create' ? ' col-sm-6' : ' col-12'}">
+            <label for="limitOfEnrollments">Limit Attend</label>
+            <input th:if="${mode=='create'}" id="limitOfEnrollments" type="number" th:field="*{limitEnrollment}" class="form-control" placeholder="0"
+                   aria-describedby="limitOfEnrollmentsHelp" min="0" required>
+            <input th:if="${mode=='edit'}" id="limitOfEnrollments" type="number" th:field="*{limitEnrollment}" class="form-control" placeholder="0"
+                   aria-describedby="limitOfEnrollmentsHelp" th:min="${eventSetting.limitEnrollment}" required>
+            <small id="limitOfEnrollmentsHelp" class="form-text text-muted">
+                Set maximum number how many members the event allows.
+            </small>
+            <small class="invalid-feedback">Input only digit number.</small>
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('limitEnrollment')}" th:errors="*{limitEnrollment}">Error</small>
+        </div>
+
+        <div class="form-group col-sm-4 mt-3">
+            <label for="endEnrollmentAt">Deadline of apply</label>
+            <input id="endEnrollmentAt" type="text" th:field="*{endEnrollmentAt}" class="form-control datetimepicker"
+                   aria-describedby="endEnrollmentAtHelp" required>
+            <small id="endEnrollmentAtHelp" class="form-text text-muted">
+                Set the time for end of allow applying.
+            </small>
+            <small class="invalid-feedback">Set the time for end of allow applying.</small>
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('endEnrollmentAt')}" th:errors="*{endEnrollmentAt}">Error</small>
+        </div>
+        <div class="form-group col-sm-4 mt-3">
+            <label for="startAt">Event Start time</label>
+            <input id="startAt" type="text" th:field="*{startAt}" class="form-control datetimepicker"
+                   aria-describedby="startAtHelp" required>
+            <small id="startAtHelp" class="form-text text-muted">
+                Event Start time.
+            </small>
+            <small class="invalid-feedback">Set the start time.</small>
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('startAt')}" th:errors="*{startAt}">Error</small>
+        </div>
+        <div class="form-group col-sm-4 mt-3">
+            <label for="endAt">Event End time</label>
+            <input id="endAt" type="text" th:field="*{endAt}" class="form-control datetimepicker"
+                   aria-describedby="endAtHelp" required>
+            <small id="endAtHelp" class="form-text text-muted">
+                The state of the event will turn terminated after the time.
+            </small>
+            <small class="invalid-feedback">Set the end time.</small>
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('endAt')}" th:errors="*{endAt}">Error</small>
+        </div>
+
+        <div class="form-group col-12 mt-3">
+            <label for="description">Details</label>
+            <textarea id="description" type="textarea" th:field="*{description}" class="editor form-control"
+                      placeholder="Write about the event as detail as possible." aria-describedby="descriptionHelp" required></textarea>
+            <small id="descriptionHelp" class="form-text text-muted">
+                Describe for the event. When starts the event, procedure, reference book, homework, fee and etc...
+            </small>
+            <small class="invalid-feedback">Describe for the event.</small>
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Error</small>
+        </div>
+
+        <div class="form-group col-12 mt-4">
+            <div class="row">
+                <div class="col-2">
+                    <a class="btn btn-outline-danger w-100" th:href="@{'/study/' + ${path} + '/events'}">Cancel</a>
+                </div>
+                <div class="col-1"></div>
+                <div class="col-9">
+                    <button class="btn btn-success w-100" type="submit" aria-describedby="submitHelp" th:text="${#strings.capitalize(mode)}">Create</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</th:block>
+
+
 </html>

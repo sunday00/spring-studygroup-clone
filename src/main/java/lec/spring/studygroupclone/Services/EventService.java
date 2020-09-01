@@ -6,7 +6,9 @@ import lec.spring.studygroupclone.Models.Event;
 import lec.spring.studygroupclone.Models.Study;
 import lec.spring.studygroupclone.Repositories.EnrollmentRepository;
 import lec.spring.studygroupclone.Repositories.EventRepository;
+import lec.spring.studygroupclone.dataMappers.EventSetting;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,8 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class EventService {
+
+    private final ModelMapper modelMapper;
 
     private final EventRepository eventRepository;
     private final EnrollmentRepository enrollmentRepository;
@@ -74,6 +78,17 @@ public class EventService {
         return eventRepository.save(event);
     }
 
+    public Event update(EventSetting eventSetting, Event event) {
+        eventSetting.setEventType(event.getEventType());
+        modelMapper.map(eventSetting, event);
+
+        // TODO:: if the limitation is grow,
+        //  modify some enrollments should be allowed
+        //  when the type is FCFS.
+
+        return event;
+    }
+
     public Event getEventById(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(NullPointerException::new);
 //        return eventRepository.getOne(eventId);
@@ -81,7 +96,7 @@ public class EventService {
 
     public HashMap<String, Boolean> getCanAccountEnroll(Account account, Event event) {
         HashMap<String, Boolean> canAccountEnroll = new HashMap<>();
-        Enrollment enrollment = enrollmentRepository.findByAccount(account);
+        Enrollment enrollment = enrollmentRepository.findByAccountAndEvent(account, event);
         boolean isEnrolled = enrollment != null;
         boolean isEnrollClosed = isEnrollClosed(event);
         boolean isAttended = isEnrolled && enrollment.isAttended();

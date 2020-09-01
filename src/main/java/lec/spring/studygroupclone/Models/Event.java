@@ -31,7 +31,7 @@ public class Event {
     @Length(min = 3, max = 50, message = "It should be 3-50 characters.")
     private String title;
 
-    @Lob
+    @Lob @Basic(fetch = FetchType.EAGER)
     private String description;
 
     @Column(nullable = false)

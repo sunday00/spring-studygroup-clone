@@ -79,7 +79,6 @@ public class Study {
 
     @Lob @Basic(fetch = FetchType.EAGER)
     private String image;
-    //TODO:: change for not base64. using helper.convertor;
 
     public boolean imageFileExists(){
         File f = new File(AppConfig.UPLOAD_PATH + "/studies/" + path + ".png");

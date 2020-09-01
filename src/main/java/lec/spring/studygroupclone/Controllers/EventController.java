@@ -36,6 +36,7 @@ public class EventController {
 
     public static final String EVENT_INDEX_VIEW = "/event/main";
     public static final String EVENT_CREATE_VIEW = "/event/create";
+    public static final String EVENT_EDIT_VIEW = "/event/edit";
     public static final String EVENT_SHOW_VIEW = "/event/show";
 
     @InitBinder("eventSetting")
@@ -73,6 +74,7 @@ public class EventController {
         model.addAttribute(study);
         model.addAttribute(account);
         model.addAttribute(new EventSetting());
+        model.addAttribute("mode", "create");
         return EVENT_CREATE_VIEW;
     }
 
@@ -89,6 +91,36 @@ public class EventController {
         Event event = eventService.create(modelMapper.map(eventSetting, Event.class), study, account);
 
         return "redirect:/study/" + path + EVENT_SHOW_VIEW + "/" + event.getId();
+    }
+
+    @GetMapping(EVENT_EDIT_VIEW + "/{eventId}")
+    public String edit (@CurrentUser Account account, @PathVariable String path, @PathVariable Long eventId, Model model) {
+        Study study = studyService.getStudyByPath(account, path, "manager");
+        Event event = eventService.getEventById(eventId);
+        model.addAttribute(study);
+        model.addAttribute(account);
+        model.addAttribute(event);
+        model.addAttribute(modelMapper.map(event, EventSetting.class));
+        model.addAttribute("mode", "edit");
+        return EVENT_CREATE_VIEW;
+    }
+
+    @PostMapping(EVENT_EDIT_VIEW + "/{eventId}")
+    public String update (@CurrentUser Account account, @PathVariable String path, @PathVariable Long eventId, Model model,
+                         @Valid EventSetting eventSetting, Errors errors, RedirectAttributes redirectAttributes) {
+        Study study = studyService.getStudyByPath(account, path, "manager");
+        Event event = eventService.getEventById(eventId);
+        if(errors.hasErrors()){
+            model.addAttribute(study);
+            model.addAttribute(account);
+            model.addAttribute(event);
+            model.addAttribute("mode", "edit");
+            return EVENT_CREATE_VIEW;
+        }
+
+        Event modifiedEvent = eventService.update(eventSetting, event);
+
+        return "redirect:/study/" + path + EVENT_SHOW_VIEW + "/" + modifiedEvent.getId();
     }
 
     @GetMapping(EVENT_SHOW_VIEW + "/{eventId}")
