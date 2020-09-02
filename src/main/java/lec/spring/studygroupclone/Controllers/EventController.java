@@ -38,6 +38,7 @@ public class EventController {
     public static final String EVENT_CREATE_VIEW = "/event/create";
     public static final String EVENT_EDIT_VIEW = "/event/edit";
     public static final String EVENT_SHOW_VIEW = "/event/show";
+    public static final String EVENT_DELETE_VIEW = "/event/delete";
 
     @InitBinder("eventSetting")
     public void init(WebDataBinder webDataBinder){
@@ -135,5 +136,16 @@ public class EventController {
         return EVENT_SHOW_VIEW;
     }
 
+//    @PostMapping(EVENT_DELETE_VIEW + "/{eventId}")
+    @DeleteMapping(EVENT_DELETE_VIEW + "/{eventId}")
+    public String delete (@CurrentUser Account account, @PathVariable String path, @PathVariable Long eventId,
+                          RedirectAttributes redirectAttributes) {
+        studyService.getStudyByPath(account, path, "manager");
+        Event event = eventService.getEventById(eventId);
+
+        eventService.delete(event);
+
+        return "redirect:/study/" + path + "/events";
+    }
 
 }

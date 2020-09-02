@@ -235,7 +235,7 @@
                     </p>
                     <p>
                         <button class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#cancelE">
-                            CANCEL
+                            DELETE
                         </button>
                     </p>
                 </dd>
@@ -254,7 +254,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">close</button>
-                                <form th:action="@{'/study/' + ${study.path} + '/event/' + ${event.id}}" th:method="delete">
+                                <form th:action="@{'/study/' + ${study.path} + '/event/delete/' + ${event.id}}" th:method="delete">
                                     <button class="btn btn-danger" type="submit" aria-describedby="submitHelp">sure</button>
                                 </form>
                             </div>

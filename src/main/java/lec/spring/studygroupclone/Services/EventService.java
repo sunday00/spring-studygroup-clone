@@ -112,4 +112,8 @@ public class EventService {
     private boolean isEnrollClosed(Event event) {
         return event.getEndEnrollmentAt().isBefore(LocalDateTime.now());
     }
+
+    public void delete(Event event) {
+        eventRepository.delete(event);
+    }
 }
