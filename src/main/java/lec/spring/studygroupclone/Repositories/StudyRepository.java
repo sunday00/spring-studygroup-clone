@@ -39,6 +39,10 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
     Study findStudyWithMembersByPath(String path);
 
     @Transactional(readOnly = true)
+    @EntityGraph(value = "Study.only", type = EntityGraph.EntityGraphType.FETCH)
+    Study findStudyByPath(String path);
+
+    @Transactional(readOnly = true)
     Set<Study> findAllByMembersContains(Account account);
 
     @Transactional(readOnly = true)

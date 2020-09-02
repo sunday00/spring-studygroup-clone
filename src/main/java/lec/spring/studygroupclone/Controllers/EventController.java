@@ -3,11 +3,15 @@ package lec.spring.studygroupclone.Controllers;
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Models.Event;
 import lec.spring.studygroupclone.Models.Study;
+import lec.spring.studygroupclone.Services.EnrollmentService;
 import lec.spring.studygroupclone.Services.EventService;
 import lec.spring.studygroupclone.Services.StudyService;
 import lec.spring.studygroupclone.dataMappers.EventSetting;
+import lec.spring.studygroupclone.helpers.ConsoleLog;
 import lec.spring.studygroupclone.helpers.account.CurrentUser;
 import lec.spring.studygroupclone.helpers.event.EventSettingValidator;
+import lec.spring.studygroupclone.helpers.study.StudyCheckAccount;
+import lec.spring.studygroupclone.helpers.study.StudyJoinData;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
@@ -29,6 +33,7 @@ public class EventController {
 
     private final ModelMapper modelMapper;
 
+    private final EnrollmentService enrollmentService;
     private final EventService eventService;
     private final StudyService studyService;
 
@@ -39,6 +44,8 @@ public class EventController {
     public static final String EVENT_EDIT_VIEW = "/event/edit";
     public static final String EVENT_SHOW_VIEW = "/event/show";
     public static final String EVENT_DELETE_VIEW = "/event/delete";
+    public static final String EVENT_APPLY_VIEW = "/event/apply";
+    public static final String EVENT_LEAVE_VIEW = "/event/leave";
 
     @InitBinder("eventSetting")
     public void init(WebDataBinder webDataBinder){
@@ -146,6 +153,28 @@ public class EventController {
         eventService.delete(event);
 
         return "redirect:/study/" + path + "/events";
+    }
+
+    //TODO
+    @PostMapping(EVENT_APPLY_VIEW + "/{eventId}")
+    public String enroll (@CurrentUser Account account, @PathVariable String path, @PathVariable Long eventId,
+                          Model model, RedirectAttributes redirectAttributes){
+        Study study = studyService.getStudyByPath(account, path, StudyJoinData.ONLY, StudyCheckAccount.MEMBER);
+        Event event = eventService.getEventById(eventId);
+        enrollmentService.apply(event, account);
+
+        return "redirect:/study/" + path + EVENT_SHOW_VIEW + "/" + event.getId();
+    }
+
+    //TODO
+    @PostMapping(EVENT_LEAVE_VIEW + "/{eventId}")
+    public String leave (@CurrentUser Account account, @PathVariable String path, @PathVariable Long eventId,
+                         Model model, RedirectAttributes redirectAttributes){
+        Study study = studyService.getStudyByPath(account, path, StudyJoinData.ONLY, StudyCheckAccount.MEMBER);
+        Event event = eventService.getEventById(eventId);
+        enrollmentService.leave(event, account);
+
+        return "redirect:/study/" + path + EVENT_SHOW_VIEW + "/" + event.getId();
     }
 
 }

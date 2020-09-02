@@ -16,4 +16,6 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
     @Transactional(readOnly = true)
     Enrollment findByAccountAndEvent(Account account, Event event);
+
+    void deleteByEventAndAccount(Event event, Account account);
 }

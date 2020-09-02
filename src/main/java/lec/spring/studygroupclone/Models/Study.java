@@ -37,6 +37,9 @@ import java.util.stream.Collectors;
 @NamedEntityGraph(name = "Study.withMembers", attributeNodes = {
         @NamedAttributeNode("members")
 })
+@NamedEntityGraph(name = "Study.only", attributeNodes = {
+
+})
 @Getter @Setter @EqualsAndHashCode(of = "id")
 @Builder @AllArgsConstructor @NoArgsConstructor
 public class Study {
@@ -151,7 +154,11 @@ public class Study {
     }
 
     public boolean isMember(CurrentAccount currentAccount) {
-        return this.members.contains(currentAccount.getAccount());
+        return this.members.contains(currentAccount.getAccount()) || isManager(currentAccount);
+    }
+
+    public boolean isMember(Account currentAccount) {
+        return this.members.contains(currentAccount) || isManager(currentAccount);
     }
 
     public boolean isManager(CurrentAccount currentAccount) {

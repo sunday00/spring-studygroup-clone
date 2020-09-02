@@ -4,7 +4,10 @@ import lec.spring.studygroupclone.Models.*;
 import lec.spring.studygroupclone.Repositories.EventRepository;
 import lec.spring.studygroupclone.Repositories.StudyRepository;
 import lec.spring.studygroupclone.dataMappers.StudySetting;
+import lec.spring.studygroupclone.helpers.ConsoleLog;
 import lec.spring.studygroupclone.helpers.Converter;
+import lec.spring.studygroupclone.helpers.study.StudyCheckAccount;
+import lec.spring.studygroupclone.helpers.study.StudyJoinData;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.AccessDeniedException;
@@ -45,6 +48,7 @@ public class StudyService {
         return study;
     }
 
+    //TODO :: replace with below
     public Study getStudyByPath(Account account, String path, String mode) {
         Study study;
         switch (mode) {
@@ -69,6 +73,41 @@ public class StudyService {
         if( !study.isManager(account) ) throw new AccessDeniedException("Not enough permission");
 
         return study;
+    }
+
+    // TODO:: replace from above
+    public Study getStudyByPath(Account account, String path, StudyJoinData mode, StudyCheckAccount check) {
+        Study study;
+        switch (mode) {
+            case TAG_AND_MANAGER:
+                study = studyRepository.findStudyWithTagsByPath(path);
+                break;
+            case LOCATION_AND_MANAGER:
+                study = studyRepository.findStudyWithLocationsByPath(path);
+                break;
+            case MANAGER:
+                study = studyRepository.findStudyWithManagersByPath(path);
+                break;
+            case MEMBER:
+                study = studyRepository.findStudyWithMembersByPath(path);
+                break;
+            case ONLY:
+                study = studyRepository.findStudyByPath(path);
+                break;
+            default:
+                return this.getStudyByPath(account, path);
+        }
+
+        if( study == null ) throw new IllegalArgumentException("There is no study : " + path);
+
+        if( !checkPermission(check, study, account) ) throw new AccessDeniedException("Not enough permission");
+
+        return study;
+    }
+
+    private boolean checkPermission(StudyCheckAccount check, Study study, Account account){
+        if( check.compareTo(StudyCheckAccount.MANAGER) <= 0 && !study.isManager(account) ) return false;
+        else return check.compareTo(StudyCheckAccount.MEMBER) > 0 || study.isMember(account);
     }
 
     public void save(Study study, StudySetting studySetting) {
