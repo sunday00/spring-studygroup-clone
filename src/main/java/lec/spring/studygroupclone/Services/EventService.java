@@ -7,6 +7,7 @@ import lec.spring.studygroupclone.Models.Study;
 import lec.spring.studygroupclone.Repositories.EnrollmentRepository;
 import lec.spring.studygroupclone.Repositories.EventRepository;
 import lec.spring.studygroupclone.dataMappers.EventSetting;
+import lec.spring.studygroupclone.helpers.event.EventType;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -82,9 +83,10 @@ public class EventService {
         eventSetting.setEventType(event.getEventType());
         modelMapper.map(eventSetting, event);
 
-        // TODO:: if the limitation is grow,
-        //  modify some enrollments should be allowed
-        //  when the type is FCFS.
+        if( event.getEventType() == EventType.FCFS && event.remainEnroll() > 0){
+            List<Enrollment> lists = event.getWaitingByLength(event.remainEnroll());
+            if(lists.size() > 0) enrollmentRepository.updateByIdInList(lists);
+        }
 
         return event;
     }
