@@ -106,7 +106,7 @@ public class EventService {
         canAccountEnroll.put("isEnrolled", isEnrolled);
         canAccountEnroll.put("isEnrollClosed", isEnrollClosed);
         canAccountEnroll.put("isEnrollable", !isEnrollClosed && !isEnrolled);
-        canAccountEnroll.put("isCancelable", !isEnrollClosed && isEnrolled);
+        canAccountEnroll.put("isCancelable", !isEnrollClosed && isEnrolled && !isAttended);
         canAccountEnroll.put("isAttended", isAttended);
         return canAccountEnroll;
     }

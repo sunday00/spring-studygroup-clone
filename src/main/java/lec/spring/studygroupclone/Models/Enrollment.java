@@ -30,11 +30,13 @@ public class Enrollment {
     private boolean attended;
 
     public boolean isAcceptable(Event event){
-        return !this.isEnrollClosed(event) && !this.accepted && event.getEventType() == EventType.CONFIRMATIVE;
+        return !this.isEnrollClosed(event) && !this.accepted && event.getEventType() == EventType.CONFIRMATIVE
+                && event.getLimitEnrollment() > event.getEnrollmentsByAccepted(true).size();
     }
 
     public boolean isDeniable(Event event){
-        return !this.isEnrollClosed(event) && this.accepted && event.getEventType() == EventType.CONFIRMATIVE;
+        return !this.isEnrollClosed(event) && this.accepted && event.getEventType() == EventType.CONFIRMATIVE
+                && !this.isAttended();
     }
 
     public boolean isManageable(Event event){

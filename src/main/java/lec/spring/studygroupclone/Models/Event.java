@@ -10,6 +10,7 @@ import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NamedEntityGraph(name = "Event.withEnrollments", attributeNodes = {
     @NamedAttributeNode("enrollments")
@@ -56,6 +57,7 @@ public class Event {
     private Integer limitEnrollment;
 
     @OneToMany(mappedBy = "event")
+    @OrderBy("enrolledAt asc")
     private List<Enrollment> enrollments;
 
     public void addEnrollment(Enrollment enrollment){
@@ -91,6 +93,10 @@ public class Event {
 
     public int remainEnroll(){
         return (int) (this.limitEnrollment - this.enrollments.stream().filter(Enrollment::isAccepted).count());
+    }
+
+    public List<Enrollment> getEnrollmentsByAccepted(boolean accepted){
+        return this.enrollments.stream().filter(e -> e.isAccepted() == accepted).collect(Collectors.toList());
     }
 
     @Enumerated(EnumType.STRING)

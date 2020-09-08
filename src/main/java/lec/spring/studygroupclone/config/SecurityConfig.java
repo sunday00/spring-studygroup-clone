@@ -1,6 +1,5 @@
 package lec.spring.studygroupclone.config;
 
-import lec.spring.studygroupclone.Services.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final AccountService accountService;
+    private final UserDetailsService userDetailsService;
     private final DataSource dataSource;
 
     @Override
@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin().loginPage("/login").usernameParameter("email").permitAll();
         http.logout().logoutSuccessUrl("/");
 
-        http.rememberMe().userDetailsService(accountService).tokenRepository(tokenRepository());
+        http.rememberMe().userDetailsService(userDetailsService).tokenRepository(tokenRepository());
     }
 
     private PersistentTokenRepository tokenRepository() {

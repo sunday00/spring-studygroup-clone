@@ -167,19 +167,23 @@
                                 <span th:if="${!enroll.accepted}" class="fas fa-hourglass-half" data-toggle="tooltip" title="Wait for confirmation"></span>
                             </td>
                             <td th:if="${study.isManager(#authentication.principal)}">
-                                <a th:if="${enroll.isAcceptable(event)}"
-                                   href="#" class="text-decoration-none text-success"
-                                   th:href="@{'/study/' + ${study.path} + '/event/' + ${event.id} + '/enrollment/' + ${enroll.id} + '/accept'}">accept</a>
-                                <a th:if="${enroll.isDeniable(event)}"
-                                   href="#" class="text-decoration-none text-warning"
-                                   th:href="@{'/study/' + ${study.path} + '/event/' + ${event.id} + '/enrollment/' + ${enroll.id} + '/reject'}">reject</a>
+                                <form th:if="${enroll.isAcceptable(event)}"  th:action="@{'/study/' + ${study.path} + '/event/' + ${event.id} + '/enrollment/' + ${enroll.id} + '/accept'}" th:method="post">
+                                    <input class="btn btn-success" type="submit" value="accept" />
+                                </form>
+                                <form th:if="${enroll.isDeniable(event)}"  th:action="@{'/study/' + ${study.path} + '/event/' + ${event.id} + '/enrollment/' + ${enroll.id} + '/reject'}" th:method="post">
+                                    <input class="btn btn-warning" type="submit" value="reject" />
+                                </form>
                                 <span th:if="${!enroll.isManageable(event)}"> - </span>
                             </td>
                             <td th:if="${study.isManager(#authentication.principal)}">
-                                <a th:if="${enroll.accepted && !enroll.attended}" href="#" class="btn btn-sm btn-outline-success"
-                                   th:href="@{'/study/' + ${study.path} + '/event/' + ${event.id} + '/enrollment/' + ${enroll.id} + '/checkin'}">attended</a>
-                                <a th:if="${enroll.accepted && enroll.attended}" href="#" class="btn btn-sm btn-outline-warning"
-                                   th:href="@{'/study/' + ${study.path} + '/event/' + ${event.id} + '/enrollment/' + ${enroll.id} + '/cancel-checkin'}">no show</a>
+                                <form th:if="${enroll.accepted && !enroll.attended}"
+                                      th:action="@{'/study/' + ${study.path} + '/event/' + ${event.id} + '/enrollment/' + ${enroll.id} + '/checkin'}" th:method="post">
+                                    <input class="btn btn-sm btn-outline-success" type="submit" value="attended" />
+                                </form>
+                                <form th:if="${enroll.accepted && enroll.attended}"
+                                      th:action="@{'/study/' + ${study.path} + '/event/' + ${event.id} + '/enrollment/' + ${enroll.id} + '/cancel-checkin'}" th:method="post">
+                                    <input class="btn btn-sm btn-outline-success" type="submit" value="no show" />
+                                </form>
                             </td>
                         </tr>
                         </tbody>

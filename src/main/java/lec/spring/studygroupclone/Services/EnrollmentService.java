@@ -22,6 +22,10 @@ public class EnrollmentService {
 
     public void leave(Event event, Account account) {
         Enrollment enrollment = enrollmentRepository.findByAccountAndEvent(account, event);
+        if(enrollment.isAttended()){
+            throw new IllegalArgumentException("Already attended enrollment can't be deleted");
+        }
+
         event.removeEnrollment(enrollment);
         enrollmentRepository.deleteByEventAndAccount(event, account);
         if( event.remainEnroll() > 0 && event.getEventType() == EventType.FCFS ){
@@ -41,5 +45,21 @@ public class EnrollmentService {
         enrollment.setEnrolledAt(LocalDateTime.now());
 
         return enrollmentRepository.save(enrollment);
+    }
+
+    public void acceptEnroll(Long id) {
+        enrollmentRepository.getOne(id).setAccepted(true);
+    }
+
+    public void rejectEnroll(Long id) {
+        enrollmentRepository.getOne(id).setAccepted(false);
+    }
+
+    public void attend(Long id) {
+        enrollmentRepository.getOne(id).setAttended(true);
+    }
+
+    public void cancelAttend(Long id) {
+        enrollmentRepository.getOne(id).setAttended(false);
     }
 }

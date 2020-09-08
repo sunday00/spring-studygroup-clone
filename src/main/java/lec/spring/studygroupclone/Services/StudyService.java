@@ -1,5 +1,6 @@
 package lec.spring.studygroupclone.Services;
 
+import lec.spring.studygroupclone.Events.StudyCreated;
 import lec.spring.studygroupclone.Models.*;
 import lec.spring.studygroupclone.Repositories.EventRepository;
 import lec.spring.studygroupclone.Repositories.StudyRepository;
@@ -10,6 +11,7 @@ import lec.spring.studygroupclone.helpers.study.StudyCheckAccount;
 import lec.spring.studygroupclone.helpers.study.StudyJoinData;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +29,12 @@ public class StudyService {
     private final StudyRepository studyRepository;
     private final EventRepository eventRepository;
     private final ModelMapper modelMapper;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public Study create(Study study, Account account) {
         Study newStudy = studyRepository.save(study);
         newStudy.addManager(account);
+        applicationEventPublisher.publishEvent(new StudyCreated(newStudy));
         return newStudy;
     }
 

@@ -27,4 +27,6 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     @Modifying
     @Query("UPDATE Enrollment e SET e.accepted = true WHERE e IN (:enrollments)")
     void updateByIdInList(List<Enrollment> enrollments);
+
+    List<Enrollment> findAllByEvent(Event event);
 }
