@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>StudyGroup-clone Service</title>
+</head>
+<body>
+    <div>
+        <h1>Hello, <span th:text="${nickname}"></span>!</h1>
+        <p>StudyGroup-clone Service sent this email, because of you want to receive notification.</p>
+        <div>
+            <h2 th:text="${title + ' has been ' + state}"></h2>
+            <p>Check this out,</p>
+            <p>
+                <a th:href="${host + link}" th:text="${host + link}"></a>.
+            </p>
+        </div>
+        <p>If you don't want to receive the alarm more, simply click
+            <a th:href="${host + notificationOffLink}" th:text="${host + notificationOffLink}"></a>.
+        </p>
+    </div>
+    <footer th:replace="fragment.html :: footer"></footer>
+</body>
+</html>

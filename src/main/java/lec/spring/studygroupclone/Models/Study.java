@@ -31,6 +31,10 @@ import java.util.stream.Collectors;
         @NamedAttributeNode("locations"),
         @NamedAttributeNode("managers")
 })
+@NamedEntityGraph(name = "Study.withTagsAndLocations", attributeNodes = {
+        @NamedAttributeNode("tags"),
+        @NamedAttributeNode("locations")
+})
 @NamedEntityGraph(name = "Study.withManagers", attributeNodes = {
         @NamedAttributeNode("managers")
 })

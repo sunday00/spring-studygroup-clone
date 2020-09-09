@@ -2,10 +2,11 @@ package lec.spring.studygroupclone.Repositories;
 
 import lec.spring.studygroupclone.Models.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public interface AccountRepository extends JpaRepository<Account, Long> {
+public interface AccountRepository extends JpaRepository<Account, Long> , QuerydslPredicateExecutor<Account> {
 
     @Transactional(readOnly = true)
     boolean existsByEmail(String email);

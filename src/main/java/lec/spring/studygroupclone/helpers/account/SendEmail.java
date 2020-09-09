@@ -2,6 +2,7 @@ package lec.spring.studygroupclone.helpers.account;
 
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Models.EmailInfo;
+import lec.spring.studygroupclone.Models.Study;
 import lec.spring.studygroupclone.Repositories.AccountRepository;
 import lec.spring.studygroupclone.helpers.MailSender;
 import lombok.RequiredArgsConstructor;
@@ -69,5 +70,38 @@ public class SendEmail {
         account.setJoinedAt(LocalDateTime.now());
         accountRepository.save(account);
         return account;
+    }
+
+    public void sendStudyAlarm(Account member, Study study, String type) {
+        String host = InetAddress.getLoopbackAddress().getHostName().endsWith("localhost") ? "http://localhost:8080" : "http://"+InetAddress.getLoopbackAddress().getHostName();
+
+        Context context = new Context();
+        context.setVariable("nickname", member.getNickname());
+
+        context.setVariable("host", host);
+
+        context.setVariable("study", study);
+
+        String message;
+                switch (type){
+            case "created":
+                context.setVariable("link", "/study/read/show/" + study.getPath());
+                context.setVariable("notificationOffLink", "/profile/noti");
+                context.setVariable("title", study.getTitle());
+                context.setVariable("state", "created and open.");
+                message = templateEngine.process("mail/studyCreated", context);
+                break;
+            default:
+                context.setVariable("link", "/study/");
+                message = templateEngine.process("mail/", context);
+                break;
+        }
+
+        EmailInfo emailInfo = EmailInfo.builder()
+                .to(member.getEmail())
+                .subject("STUDY GROUP SITE NOTIFICATION")
+                .message(message)
+                .build();
+        mailSender.send(emailInfo);
     }
 }

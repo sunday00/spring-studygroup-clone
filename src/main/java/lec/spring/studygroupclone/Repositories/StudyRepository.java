@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,10 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
     Study findStudyWithLocationsByPath(String path);
 
     @Transactional(readOnly = true)
+    @EntityGraph(value = "Study.withTagsAndLocations", type = EntityGraph.EntityGraphType.FETCH)
+    Study findWithTagsAndLocationsById(Long id);
+
+    @Transactional(readOnly = true)
     @EntityGraph(value = "Study.withManagers", type = EntityGraph.EntityGraphType.FETCH)
     Study findStudyWithManagersByPath(String path);
 
@@ -43,8 +48,12 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
     Study findStudyByPath(String path);
 
     @Transactional(readOnly = true)
+    @OrderBy(value = "createdAt DESC")
     Set<Study> findAllByMembersContains(Account account);
 
     @Transactional(readOnly = true)
+    @OrderBy(value = "createdAt DESC")
     Set<Study> findAllByManagersContains(Account account);
+
+
 }

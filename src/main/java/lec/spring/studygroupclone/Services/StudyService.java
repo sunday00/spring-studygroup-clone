@@ -34,7 +34,7 @@ public class StudyService {
     public Study create(Study study, Account account) {
         Study newStudy = studyRepository.save(study);
         newStudy.addManager(account);
-        applicationEventPublisher.publishEvent(new StudyCreated(newStudy));
+//        applicationEventPublisher.publishEvent(new StudyCreated(newStudy));
         return newStudy;
     }
 
@@ -149,13 +149,11 @@ public class StudyService {
     public String updateStatus(Study study, String status) {
         String nowStatus = null;
         if(status.equals("publish")){
-
-            // TODO:: send EMAIL ALARM
-
             if ( !study.isClosed() && !study.isPublished() ) {
                 study.setPublished(true);
                 study.setPublishedDateTime(LocalDateTime.now());
                 nowStatus = "published";
+                this.applicationEventPublisher.publishEvent(new StudyCreated(study));
             }
             else throw new RuntimeException("The study is already open or closed.");
         } else if (status.equals("close")){
