@@ -28,7 +28,6 @@ public class NotificationInterceptor implements HandlerInterceptor {
             Long unreadNotificationCount = notificationService.getAlarmCount(account, false);
             modelAndView.addObject("unreadNotification", unreadNotificationCount);
         }
-
     }
 
     private boolean isInterceptable(ModelAndView modelAndView, Authentication authentication){

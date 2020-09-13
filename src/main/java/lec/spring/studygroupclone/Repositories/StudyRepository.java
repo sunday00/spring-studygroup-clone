@@ -44,6 +44,10 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
     Study findStudyWithMembersByPath(String path);
 
     @Transactional(readOnly = true)
+    @EntityGraph(attributePaths = {"managers", "members"})
+    Study findStudyWithManagersAndMembersById(Long id);
+
+    @Transactional(readOnly = true)
     @EntityGraph(value = "Study.only", type = EntityGraph.EntityGraphType.FETCH)
     Study findStudyByPath(String path);
 
@@ -54,6 +58,4 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
     @Transactional(readOnly = true)
     @OrderBy(value = "createdAt DESC")
     Set<Study> findAllByManagersContains(Account account);
-
-
 }

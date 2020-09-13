@@ -9,6 +9,7 @@ import lec.spring.studygroupclone.Repositories.AccountRepository;
 import lec.spring.studygroupclone.Repositories.StudyRepository;
 import lec.spring.studygroupclone.Services.NotificationService;
 import lec.spring.studygroupclone.helpers.account.SendEmail;
+import lec.spring.studygroupclone.helpers.notification.NotificationType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -16,6 +17,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
@@ -44,17 +46,30 @@ public class StudyListener {
         Iterable<Account> acccounts =  accountRepository.findAll(AccountPredicate.findByTagsAnsLocations(tags, locations));
 
         acccounts.forEach(a -> {
-            this.sendNotification(a, study);
+            this.sendNotification(a, study, NotificationType.STUDY_CREATED, null);
         });
     }
 
-    private void sendNotification(Account account, Study study){
-        if( account.isStudyCreatedAlarm() ){
+    @EventListener
+    public void handleStudyUpdated(StudyUpdated studyUpdated){
+        Study study = studyRepository.findStudyWithManagersAndMembersById(studyUpdated.getStudy().getId());
+        Set<Account> accounts = new HashSet<>();
 
-            notificationService.create(account, study);
+        accounts.addAll(study.getManagers());
+        accounts.addAll(study.getMembers());
+
+        accounts.forEach(a -> {
+            this.sendNotification(a, study, NotificationType.UPDATED_STUDY, studyUpdated.getMessage());
+        });
+    }
+
+    private void sendNotification(Account account, Study study, NotificationType notificationType, String msg){
+        if( account.isStudyCreatedAlarm() || account.isStudyUpdateAlarm()){
+
+            notificationService.create(account, study, notificationType, msg);
 
             if( account.isEmailAlarm() && account.isEmailVerified()){
-                sendEmail.sendStudyAlarm(account, study, "created");
+                sendEmail.sendStudyAlarm(account, study, notificationType, msg);
             }
         }
     }

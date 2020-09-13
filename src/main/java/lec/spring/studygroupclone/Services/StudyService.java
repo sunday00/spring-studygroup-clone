@@ -1,6 +1,7 @@
 package lec.spring.studygroupclone.Services;
 
 import lec.spring.studygroupclone.Events.StudyCreated;
+import lec.spring.studygroupclone.Events.StudyUpdated;
 import lec.spring.studygroupclone.Models.*;
 import lec.spring.studygroupclone.Repositories.EventRepository;
 import lec.spring.studygroupclone.Repositories.StudyRepository;
@@ -116,6 +117,7 @@ public class StudyService {
 
     public void save(Study study, StudySetting studySetting) {
         modelMapper.map(studySetting, study);
+        this.applicationEventPublisher.publishEvent(new StudyUpdated(study, "Updated description"));
     }
 
     public void setStudyToggleBannerUsing(Study study, String enable) {
@@ -157,35 +159,29 @@ public class StudyService {
             }
             else throw new RuntimeException("The study is already open or closed.");
         } else if (status.equals("close")){
-
-            // TODO:: send EMAIL ALARM
-
             if ( !study.isClosed() && study.isPublished() ) {
                 study.setClosed(true);
                 study.setClosedDateTime(LocalDateTime.now());
                 nowStatus = "closed";
+                this.applicationEventPublisher.publishEvent(new StudyUpdated(study, "Study is now Shutting Down."));
             }
             else throw new RuntimeException("The study is already closed or not opened.");
         } else if (status.equals("recruit")){
-
-            // TODO:: send EMAIL ALARM
-
             if ( !study.isClosed() && study.isPublished() && study.canUpdateRecruiting() && !study.isRecruiting() ) {
                 study.setRecruiting(true);
                 study.setRecruitingUpdatedDateTime(LocalDateTime.now());
                 nowStatus = "recruiting";
+                this.applicationEventPublisher.publishEvent(new StudyUpdated(study, "Study is now recruiting."));
             } else if( !study.isClosed() && study.isPublished() && !study.isRecruiting()){
                 throw new RuntimeException("You should wait " + study.getRemainAbleToUpdateRecruiting() + " minutes.");
             }
             else throw new RuntimeException("The study is closed or not opened or already recruiting.");
         } else if (status.equals("block")){
-
-            // TODO:: send EMAIL ALARM
-
             if ( !study.isClosed() && study.isPublished() && study.canUpdateRecruiting() && study.isRecruiting()) {
                 study.setRecruiting(false);
                 study.setRecruitingUpdatedDateTime(LocalDateTime.now());
                 nowStatus = "blocked";
+                this.applicationEventPublisher.publishEvent(new StudyUpdated(study, "Recruiting is now closed."));
             } else if( !study.isClosed() && study.isPublished() && study.isRecruiting()){
                 throw new RuntimeException("You should wait " + study.getRemainAbleToUpdateRecruiting() + " minutes.");
             }
@@ -196,12 +192,10 @@ public class StudyService {
     }
 
     public void updatePath(Study study, String path) {
-        //TODO:: send path modified mail to members.
         study.setPath(path);
     }
 
     public void updateTitle(Study study, String title) {
-        //TODO:: send path modified mail to members.
         study.setTitle(title);
     }
 

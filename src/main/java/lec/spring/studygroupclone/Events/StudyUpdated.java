@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class StudyCreated{
+public class StudyUpdated{
 
     private final Study study;
+
+    private final String message;
 }
