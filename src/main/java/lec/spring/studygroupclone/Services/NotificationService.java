@@ -26,6 +26,10 @@ public class NotificationService {
         setNotification(account, study, notificationType, msg);
     }
 
+    public void create(Account account, Study study, Event event, NotificationType notificationType, String msg) {
+        setNotification(account, study, event, notificationType, msg);
+    }
+
     public void setNotification(Account account, Study study, NotificationType notificationType, String msg){
         Notification notification = new Notification();
 
@@ -50,14 +54,24 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-    public void setNotification(Account account, Study study, Event event, NotificationType notificationType){
+    public void setNotification(Account account, Study study, Event event, NotificationType notificationType, String msg){
         Notification notification = new Notification();
 
         switch (notificationType){
-            case ALLOW_JOINING:
-                notification.setTitle("You are allowing to join " + event.getId() + "/" + event.getTitle() + ".");
+            case EVENT_CREATED:
+                notification.setTitle(study.getTitle() + " / " + event.getTitle() + " has been created.");
                 notification.setLink("/study/"+ study.getPath() +"/event/show/" + event.getId());
-                notification.setMessage(event.getDescription());
+                notification.setMessage("end of enroll : " + event.getEndEnrollmentAt().toString().replace("T", " "));
+                break;
+            case UPDATED_EVENT:
+                notification.setTitle(study.getTitle() + " / " + event.getTitle() + " has been updated.");
+                notification.setLink("/study/"+ study.getPath() +"/event/show/" + event.getId());
+                notification.setMessage(study.getTitle() + " / " + event.getTitle() + " : " + msg);
+                break;
+            case DELETE_EVENT:
+                notification.setTitle(study.getTitle() + " / " + event.getTitle() + " has been deleted.");
+                notification.setLink("/study/" + study.getPath() + "/events");
+                notification.setMessage("Bye~");
                 break;
         }
 
@@ -83,7 +97,8 @@ public class NotificationService {
 
         List<Notification> studyCreatedLists = new ArrayList<>();
         List<Notification> studyUpdatedLists = new ArrayList<>();
-//        List<Notification> studyCreatedNotifications = new ArrayList<>();
+        List<Notification> eventCreatedLists = new ArrayList<>();
+        List<Notification> eventUpdatedLists = new ArrayList<>();
 
         for(Notification l : list){
             switch (l.getNotificationType()){
@@ -93,13 +108,28 @@ public class NotificationService {
                 case UPDATED_STUDY:
                     studyUpdatedLists.add(l);
                     break;
+                case EVENT_CREATED:
+                    eventCreatedLists.add(l);
+                    break;
+                case UPDATED_EVENT:
+                case DELETE_EVENT:
+                    eventUpdatedLists.add(l);
+                    break;
             }
         }
 
         unreadSets.put("all", list);
         unreadSets.put("studyCreatedLists", studyCreatedLists);
         unreadSets.put("studyUpdatedLists", studyUpdatedLists);
+        unreadSets.put("eventCreatedLists", eventCreatedLists);
+        unreadSets.put("eventUpdatedLists", eventUpdatedLists);
 
         return unreadSets;
+    }
+
+    public void notificationRead(Account account, Long id) {
+        Notification notification = notificationRepository.findByAccountAndId(account, id);
+        if( account == null || notification == null ) throw new NullPointerException("no notification or not your notification");
+        notification.setChecked(true);
     }
 }

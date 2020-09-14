@@ -1,5 +1,8 @@
 package lec.spring.studygroupclone.Services;
 
+import lec.spring.studygroupclone.Events.EventCreated;
+import lec.spring.studygroupclone.Events.EventDeleted;
+import lec.spring.studygroupclone.Events.EventUpdated;
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Models.Enrollment;
 import lec.spring.studygroupclone.Models.Event;
@@ -10,6 +13,7 @@ import lec.spring.studygroupclone.dataMappers.EventSetting;
 import lec.spring.studygroupclone.helpers.event.EventType;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +31,8 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EnrollmentRepository enrollmentRepository;
+
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public void getAllEvents() {
         eventRepository.findAll();
@@ -76,6 +82,7 @@ public class EventService {
         event.setAuthor(account);
         event.setStudy(study);
         event.setCreatedAt(LocalDateTime.now());
+        applicationEventPublisher.publishEvent(new EventCreated(study, event));
         return eventRepository.save(event);
     }
 
@@ -87,6 +94,8 @@ public class EventService {
             List<Enrollment> lists = event.getWaitingByLength(event.remainEnroll());
             if(lists.size() > 0) enrollmentRepository.updateByIdInList(lists);
         }
+
+        applicationEventPublisher.publishEvent(new EventUpdated(event, "event updated."));
 
         return event;
     }
@@ -116,6 +125,8 @@ public class EventService {
     }
 
     public void delete(Event event) {
+        applicationEventPublisher.publishEvent(new EventDeleted(event, "event deleted."));
+        enrollmentRepository.deleteAllByEvent(event);
         eventRepository.delete(event);
     }
 }

@@ -31,8 +31,8 @@ public class EnrollmentController {
     public String acceptEnroll (@CurrentUser Account account, RedirectAttributes redirectAttributes,
                                 @PathVariable String path, @PathVariable Long eventId, @PathVariable Long id) {
         studyService.getStudyByPath(account, path, StudyJoinData.MANAGER, StudyCheckAccount.MANAGER);
-        eventService.getEventById(eventId);
-        enrollmentService.acceptEnroll(id);
+        Event event = eventService.getEventById(eventId);
+        enrollmentService.acceptEnroll(id, event);
 
         return "redirect:/study/" + path + EVENT_SHOW_VIEW + "/" + eventId;
     }
@@ -41,7 +41,9 @@ public class EnrollmentController {
     public String rejectEnroll (@CurrentUser Account account, RedirectAttributes redirectAttributes,
                                 @PathVariable String path, @PathVariable Long eventId, @PathVariable Long id) {
         studyService.getStudyByPath(account, path, StudyJoinData.MANAGER, StudyCheckAccount.MANAGER);
-        enrollmentService.rejectEnroll(id);
+        Event event = eventService.getEventById(eventId);
+        enrollmentService.rejectEnroll(id, event);
+
         return "redirect:/study/" + path + EVENT_SHOW_VIEW + "/" + eventId;
     }
 

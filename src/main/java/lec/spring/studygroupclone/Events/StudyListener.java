@@ -24,14 +24,16 @@ import java.util.Set;
 @Transactional
 @Async
 @Component
-@RequiredArgsConstructor
-public class StudyListener {
+public class StudyListener extends EventListenerBase {
 
     private final StudyRepository studyRepository;
     private final AccountRepository accountRepository;
-    private final NotificationService notificationService;
 
-    private final SendEmail sendEmail;
+    public StudyListener(NotificationService notificationService, SendEmail sendEmail, StudyRepository studyRepository, AccountRepository accountRepository) {
+        super(notificationService, sendEmail);
+        this.studyRepository = studyRepository;
+        this.accountRepository = accountRepository;
+    }
 
     @EventListener
     public void handleStudyCreated(StudyCreated studyCreated){
@@ -43,9 +45,9 @@ public class StudyListener {
         Set<Tag> tags = study.getTags();
         Set<Location> locations = study.getLocations();
 
-        Iterable<Account> acccounts =  accountRepository.findAll(AccountPredicate.findByTagsAnsLocations(tags, locations));
+        Iterable<Account> accounts =  accountRepository.findAll(AccountPredicate.findByTagsAnsLocations(tags, locations));
 
-        acccounts.forEach(a -> {
+        accounts.forEach(a -> {
             this.sendNotification(a, study, NotificationType.STUDY_CREATED, null);
         });
     }
@@ -61,16 +63,5 @@ public class StudyListener {
         accounts.forEach(a -> {
             this.sendNotification(a, study, NotificationType.UPDATED_STUDY, studyUpdated.getMessage());
         });
-    }
-
-    private void sendNotification(Account account, Study study, NotificationType notificationType, String msg){
-        if( account.isStudyCreatedAlarm() || account.isStudyUpdateAlarm()){
-
-            notificationService.create(account, study, notificationType, msg);
-
-            if( account.isEmailAlarm() && account.isEmailVerified()){
-                sendEmail.sendStudyAlarm(account, study, notificationType, msg);
-            }
-        }
     }
 }

@@ -6,9 +6,14 @@ import lec.spring.studygroupclone.Services.NotificationService;
 import lec.spring.studygroupclone.helpers.ConsoleLog;
 import lec.spring.studygroupclone.helpers.account.CurrentUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +35,13 @@ public class NotificationController {
         model.addAttribute("readCount", readCount);
 
         return "/notification/main";
+    }
+
+    @PostMapping("/notification/read")
+    @ResponseBody
+    public ResponseEntity read(@CurrentUser Account account, @RequestBody HashMap<String, Long> body){
+        notificationService.notificationRead(account, body.get("id"));
+        return new ResponseEntity<>("{\"message\":\"DONE\"}", HttpStatus.OK);
     }
 
 }

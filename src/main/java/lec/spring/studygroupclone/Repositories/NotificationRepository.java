@@ -17,4 +17,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     @OrderBy("created_at DESC")
     List<Notification> findByAccountAndChecked(Account account, boolean checked);
+
+    Notification findByAccountAndId(Account account, Long id);
 }

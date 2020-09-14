@@ -1,5 +1,5 @@
 package lec.spring.studygroupclone.helpers.notification;
 
 public enum NotificationType {
-    STUDY_CREATED, ALLOW_JOINING, UPDATED_STUDY
+    STUDY_CREATED, UPDATED_STUDY, EVENT_CREATED, UPDATED_EVENT, DELETE_EVENT
 }

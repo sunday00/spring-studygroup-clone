@@ -1,5 +1,6 @@
 package lec.spring.studygroupclone.Services;
 
+import lec.spring.studygroupclone.Events.EventUpdated;
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Models.Enrollment;
 import lec.spring.studygroupclone.Models.Event;
@@ -7,6 +8,7 @@ import lec.spring.studygroupclone.Repositories.EnrollmentRepository;
 import lec.spring.studygroupclone.helpers.ConsoleLog;
 import lec.spring.studygroupclone.helpers.event.EventType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +20,7 @@ import java.time.LocalDateTime;
 public class EnrollmentService {
 
     private final EnrollmentRepository enrollmentRepository;
-
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public void leave(Event event, Account account) {
         Enrollment enrollment = enrollmentRepository.findByAccountAndEvent(account, event);
@@ -47,12 +49,14 @@ public class EnrollmentService {
         return enrollmentRepository.save(enrollment);
     }
 
-    public void acceptEnroll(Long id) {
+    public void acceptEnroll(Long id, Event event) {
         enrollmentRepository.getOne(id).setAccepted(true);
+        applicationEventPublisher.publishEvent(new EventUpdated(event, "You allow the joining event."));
     }
 
-    public void rejectEnroll(Long id) {
+    public void rejectEnroll(Long id, Event event) {
         enrollmentRepository.getOne(id).setAccepted(false);
+        applicationEventPublisher.publishEvent(new EventUpdated(event, "You reject the joining event."));
     }
 
     public void attend(Long id) {

@@ -2,6 +2,7 @@ package lec.spring.studygroupclone.helpers.account;
 
 import lec.spring.studygroupclone.Models.Account;
 import lec.spring.studygroupclone.Models.EmailInfo;
+import lec.spring.studygroupclone.Models.Event;
 import lec.spring.studygroupclone.Models.Study;
 import lec.spring.studygroupclone.Repositories.AccountRepository;
 import lec.spring.studygroupclone.helpers.MailSender;
@@ -31,6 +32,8 @@ public class SendEmail {
     private final MailSender mailSender;
     private final AccountRepository accountRepository;
     private final TemplateEngine templateEngine;
+
+    private final String host = InetAddress.getLoopbackAddress().getHostName().endsWith("localhost") ? "http://localhost:8080" : "http://"+InetAddress.getLoopbackAddress().getHostName();
 
     public void sendSignupConfirmEmail(Account member) {
         String host = InetAddress.getLoopbackAddress().getHostName().endsWith("localhost") ? "http://localhost:8080" : "http://"+InetAddress.getLoopbackAddress().getHostName();
@@ -74,8 +77,6 @@ public class SendEmail {
     }
 
     public void sendStudyAlarm(Account member, Study study, NotificationType type, String msg) {
-        String host = InetAddress.getLoopbackAddress().getHostName().endsWith("localhost") ? "http://localhost:8080" : "http://"+InetAddress.getLoopbackAddress().getHostName();
-
         Context context = new Context();
         context.setVariable("nickname", member.getNickname());
 
@@ -97,6 +98,53 @@ public class SendEmail {
                 context.setVariable("notificationOffLink", "/profile/noti");
                 context.setVariable("title", study.getTitle());
                 context.setVariable("state", msg + ".");
+                message = templateEngine.process("mail/studyCreated", context);
+                break;
+            default:
+                context.setVariable("link", "/study/");
+                message = templateEngine.process("mail/", context);
+                break;
+        }
+
+        EmailInfo emailInfo = EmailInfo.builder()
+                .to(member.getEmail())
+                .subject("STUDY GROUP SITE NOTIFICATION")
+                .message(message)
+                .build();
+        mailSender.send(emailInfo);
+    }
+
+    public void sendStudyAlarm(Account member, Study study, Event event, NotificationType type, String msg) {
+        Context context = new Context();
+        context.setVariable("nickname", member.getNickname());
+
+        context.setVariable("host", host);
+
+        context.setVariable("study", study);
+
+        context.setVariable("event", event);
+
+        String message;
+        switch (type){
+            case EVENT_CREATED:
+                context.setVariable("link", "/study/" + study.getPath() + "/event/" + event.getId());
+                context.setVariable("notificationOffLink", "/profile/noti");
+                context.setVariable("title", study.getTitle() + " / " + event.getTitle());
+                context.setVariable("state", "Event created.");
+                message = templateEngine.process("mail/studyCreated", context);
+                break;
+            case UPDATED_EVENT:
+                context.setVariable("link", "/study/" + study.getPath() + "/event/" + event.getId());
+                context.setVariable("notificationOffLink", "/profile/noti");
+                context.setVariable("title", study.getTitle() + " / " + event.getTitle());
+                context.setVariable("state", msg);
+                message = templateEngine.process("mail/studyCreated", context);
+                break;
+            case DELETE_EVENT:
+                context.setVariable("link", "/study/" + study.getPath() + "/events");
+                context.setVariable("notificationOffLink", "/profile/noti");
+                context.setVariable("title", study.getTitle() + " / " + event.getTitle());
+                context.setVariable("state", msg);
                 message = templateEngine.process("mail/studyCreated", context);
                 break;
             default:

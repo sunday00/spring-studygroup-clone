@@ -5,14 +5,18 @@
 
 
 <ul th:fragment="list (list)" class="list-group list-group-flush">
-    <a th:href="@{${noti.link}}" th:each="noti: ${list}"
-       class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-            <small class="text-muted" th:text="${noti.title}">Noti title</small>
-            <small class="fromNow text-muted" th:text="${noti.created_at}">3 days ago</small>
-        </div>
-        <p th:text="${noti.message}" class="text-left mb-0 mt-1">message</p>
-    </a>
+    <li th:each="noti: ${list}" class="no-style list-group-item d-flex justify-content-between">
+        <a th:href="@{${noti.link}}" class="">
+            <div class="d-flex justify-content-between">
+                <small class="text-muted" th:text="${noti.title}">Noti title</small>
+                <small class="fromNow text-muted" th:text="${noti.created_at}">3 days ago</small>
+            </div>
+            <p th:text="${noti.message}" class="text-left mb-0 mt-1">message</p>
+        </a>
+        <form class="d-inline-flex align-items-center" method="post">
+            <input type="submit" value="read" class="btn btn-outline-info btn-read" th:data-id="${noti.id}" />
+        </form>
+    </li>
 </ul>
 
 </html>

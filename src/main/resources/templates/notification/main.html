@@ -26,12 +26,12 @@
                 <a th:href="@{/notification}" th:classappend="${isNew}? active"
                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                     Should be read
-                    <span th:text="${unreadList.get('all')?.size()}">0</span>
+                    <span th:text="${unreadList.get('all')?.size()}" id="cntNew">0</span>
                 </a>
                 <a th:href="@{/notification/old}" th:classappend="${!isNew}? active"
                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                     Already read
-                    <span th:text="${readCount}">0</span>
+                    <span th:text="${readCount}" id="cntOld">0</span>
                 </a>
             </ul>
 
@@ -77,19 +77,27 @@
                 <div th:replace="notification/base.html :: list (list=${unreadList.get('studyCreatedLists')})"></div>
             </div>
 
-<!--            <div class="card mt-4" th:if="${eventEnrollmentNotifications.size() > 0}">-->
-<!--                <div class="card-header">-->
-<!--                    모임 참가 신청 관련 소식이 있습니다.-->
-<!--                </div>-->
-<!--                <div th:replace="fragments.html :: notification-list (notifications=${eventEnrollmentNotifications})"></div>-->
-<!--            </div>-->
-
             <div class="card w-100 mt-4" th:if="${unreadList.get('studyUpdatedLists')?.size() > 0}">
                 <div class="card-header">
                     Updated Study that you are in.
                 </div>
                 <div th:replace="notification/base.html :: list (list=${unreadList.get('studyUpdatedLists')})"></div>
             </div>
+
+            <div class="card w-100 mt-4" th:if="${unreadList.get('eventCreatedLists')?.size() > 0}">
+                <div class="card-header">
+                    Events under the study that you are in are created.
+                </div>
+                <div th:replace="notification/base.html :: list (list=${unreadList.get('eventCreatedLists')})"></div>
+            </div>
+
+            <div class="card w-100 mt-4" th:if="${unreadList.get('eventUpdatedLists')?.size() > 0}">
+                <div class="card-header">
+                    Event that you are in or interested joining.
+                </div>
+                <div th:replace="notification/base.html :: list (list=${unreadList.get('eventUpdatedLists')})"></div>
+            </div>
+
         </div>
     </div>
 
@@ -110,7 +118,32 @@
                 $(".fromNow").text(function(index, dateTime) {
                     return moment(dateTime, "YYYY-MM-DD`T`hh:mm").fromNow();
                 });
+
+                $('.btn-read').click(read);
             });
+        </script>
+        <script th:replace="fragment.html :: ajaxCsrf"></script>
+        <script>
+            function read(e){
+                e.preventDefault();
+
+                if( e.target.classList.contains('disabled') ) return false;
+
+                $.ajax({
+                    dataType: "json",
+                    contentType: "application/json; charset:utf-8",
+                    method: "POST",
+                    url: `/notification/read`,
+                    data: JSON.stringify({'id' : e.target.dataset.id})
+                }).done(function (data, status){
+                    console.log(`${data} and status is ${status}`);
+                    if( status === 'success' ){
+                        e.target.classList.add("disabled");
+                        $('#cntNew').text($('#cntNew').text() - 1);
+                        $('#cntOld').text($('#cntOld').text() - 0 + 1);
+                    }
+                });
+            }
         </script>
     </th:block>
 </th:block>

@@ -24,6 +24,8 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
     void deleteByEventAndAccount(Event event, Account account);
 
+    void deleteAllByEvent(Event event);
+
     @Modifying
     @Query("UPDATE Enrollment e SET e.accepted = true WHERE e IN (:enrollments)")
     void updateByIdInList(List<Enrollment> enrollments);
