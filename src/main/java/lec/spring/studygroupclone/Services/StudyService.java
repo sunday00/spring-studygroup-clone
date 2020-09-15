@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -209,5 +210,9 @@ public class StudyService {
 
     public void removeMember(Study study, Account account) {
         study.removeMember(account);
+    }
+
+    public List<Study> searchStudyList(String keyword) {
+        return studyRepository.findByKeyword(keyword);
     }
 }

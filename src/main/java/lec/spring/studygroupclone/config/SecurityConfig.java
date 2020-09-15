@@ -35,6 +35,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         HttpMethod.GET, "/profile/read/*"
                     ).permitAll()
                 .mvcMatchers(
+                        HttpMethod.GET, "/search/**"
+                    ).permitAll()
+                .mvcMatchers(
                         HttpMethod.GET, "/uploads/**"
                 ).permitAll()
                 .anyRequest().authenticated();
