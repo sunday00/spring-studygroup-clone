@@ -192,4 +192,12 @@ public class AccountService implements UserDetailsService {
         studies.addAll( studyRepository.findAllByMembersContains(account) );
         return studies;
     }
+
+    public Account save(Account account) {
+        return accountRepository.save(account);
+    }
+
+    public Long countByNickname(String nick) {
+        return accountRepository.countByNickname(nick);
+    }
 }

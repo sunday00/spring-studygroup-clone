@@ -1,5 +1,7 @@
 package lec.spring.studygroupclone.Repositories;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import lec.spring.studygroupclone.Models.*;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
@@ -23,6 +25,6 @@ public class StudyRepositoryExtensionImpl extends QuerydslRepositorySupport impl
             ).leftJoin(study.tags, QTag.tag).fetchJoin()
             .leftJoin(study.locations, QLocation.location).fetchJoin()
             .leftJoin(study.members, QAccount.account).fetchJoin()
-            .distinct().fetch();
+            .distinct().orderBy(new OrderSpecifier<>(Order.DESC, study.publishedDateTime)).fetch();
     }
 }

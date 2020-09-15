@@ -121,6 +121,12 @@ public class StudyService {
         this.applicationEventPublisher.publishEvent(new StudyUpdated(study, "Updated description"));
     }
 
+    public Study save(Study study) {
+        Study savedStudy = studyRepository.save(study);
+        this.applicationEventPublisher.publishEvent(new StudyUpdated(study, "Updated description"));
+        return savedStudy;
+    }
+
     public void setStudyToggleBannerUsing(Study study, String enable) {
         study.setUseBanner(enable.equals("true"));
     }

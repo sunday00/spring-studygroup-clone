@@ -23,4 +23,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> , Queryd
     void deleteByNickname(String nickname);
 
     void deleteByEmail(String email);
+
+    @Transactional(readOnly = true)
+    Long countByNickname(String nick);
 }

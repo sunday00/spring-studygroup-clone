@@ -53,4 +53,8 @@ public class TagService {
         if( list.size() == 0 ) return new ArrayList<String>(Collections.singletonList(""));
         return list.stream().map(Tag::getTitle).collect(Collectors.toList());
     }
+
+    public Tag save(Tag tag) {
+        return tagRepository.save(tag);
+    }
 }
