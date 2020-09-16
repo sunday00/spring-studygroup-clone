@@ -50,4 +50,8 @@ public class LocationService {
     public Location findByCity(String city) {
         return locationRepository.findByCity(city);
     }
+
+    public Location findById(int id) {
+        return locationRepository.getOne(Long.parseLong(String.valueOf(id)));
+    }
 }

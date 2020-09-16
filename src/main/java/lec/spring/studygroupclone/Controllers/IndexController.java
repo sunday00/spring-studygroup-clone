@@ -1,10 +1,13 @@
 package lec.spring.studygroupclone.Controllers;
 
 import com.github.javafaker.Faker;
+import com.querydsl.core.Tuple;
 import lec.spring.studygroupclone.Models.Account;
+import lec.spring.studygroupclone.Models.Location;
 import lec.spring.studygroupclone.Models.Study;
 import lec.spring.studygroupclone.Models.Tag;
 import lec.spring.studygroupclone.Services.AccountService;
+import lec.spring.studygroupclone.Services.LocationService;
 import lec.spring.studygroupclone.Services.StudyService;
 import lec.spring.studygroupclone.Services.TagService;
 import lec.spring.studygroupclone.config.AppConfig;
@@ -12,6 +15,10 @@ import lec.spring.studygroupclone.helpers.ConsoleLog;
 import lec.spring.studygroupclone.helpers.account.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +37,7 @@ public class IndexController {
     private final StudyService studyService;
     private final AccountService accountService;
     private final TagService tagService;
+    private final LocationService locationService;
 
     @GetMapping(path = {"/", "/main", "/index"})
     public String index(){
@@ -37,10 +45,15 @@ public class IndexController {
     }
 
     @GetMapping ("/search/study")
-    public String search(@RequestParam String keyword, Model model){
-        List<Study> studies = studyService.searchStudyList(keyword);
-        model.addAttribute("studies", studies);
+    public String search(@RequestParam String keyword, Model model,
+             @PageableDefault(size = 6, sort = "publishedDateTime", direction = Sort.Direction.DESC) Pageable pageable){
+        Page<Study> studyPagination = studyService.searchStudyList(keyword, pageable);
+        model.addAttribute("studies", studyPagination);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("sort", studyService.getSimpleSort(studyPagination.getSort()));
+
+        studyPagination.getContent().forEach(ConsoleLog::print);
+
         return "/search";
     }
 
@@ -67,6 +80,12 @@ public class IndexController {
                 tags.add(essetialTag);
             }
 
+            Set<Location> locations = new HashSet<>();
+            for(int l=0; l<faker.number().numberBetween(1,3); l++){
+                Location location = locationService.findById(faker.number().numberBetween(1, 85));
+                locations.add(location);
+            }
+
             Set<Account> members = new HashSet<>();
             Set<Account> managers = new HashSet<>();
 
@@ -76,7 +95,7 @@ public class IndexController {
 
                 if( nick.length() > 20 ) nick = nick.substring(0, 19);
 
-                if( accountService.countByNickname(nick) != null) nick = nick.substring(3) + faker.lorem().characters(3);
+                if( accountService.countByNickname(nick) != null) nick = nick.substring(4) + faker.lorem().characters(3);
 
                 Account member = Account.builder()
                         .nickname(nick)
@@ -92,7 +111,7 @@ public class IndexController {
 
                 if( nick.length() > 20 ) nick = nick.substring(0, 19);
 
-                if( accountService.countByNickname(nick) != null) nick = nick.substring(3) + faker.lorem().characters(3);
+                if( accountService.countByNickname(nick) != null) nick = nick.substring(4) + faker.lorem().characters(3);
 
                 Account member = Account.builder()
                         .nickname(nick)
@@ -115,6 +134,7 @@ public class IndexController {
             Study savedStudy = studyService.save(study);
 
             savedStudy.setTags(tags);
+            savedStudy.setLocations(locations);
             savedStudy.setMembers(members);
             savedStudy.setManagers(managers);
 

@@ -1,5 +1,6 @@
 package lec.spring.studygroupclone.Services;
 
+import com.querydsl.core.Tuple;
 import lec.spring.studygroupclone.Events.StudyCreated;
 import lec.spring.studygroupclone.Events.StudyUpdated;
 import lec.spring.studygroupclone.Models.*;
@@ -13,6 +14,9 @@ import lec.spring.studygroupclone.helpers.study.StudyJoinData;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -218,7 +222,19 @@ public class StudyService {
         study.removeMember(account);
     }
 
-    public List<Study> searchStudyList(String keyword) {
-        return studyRepository.findByKeyword(keyword);
+    public Page<Study> searchStudyList(String keyword, Pageable pageable) {
+        return studyRepository.findByKeyword(keyword, pageable);
+    }
+
+    public String getSimpleSort(Sort sort) {
+        String s = sort.toString();
+        if(s.contains("publishedDateTime")){
+            if( s.endsWith("DESC") ) return "publishedDateTime,desc";
+            if( s.endsWith("ASC") ) return "publishedDateTime,asc";
+        } else if (s.contains("memberCount")){
+            if( s.endsWith("DESC") ) return "memberCount,desc";
+            if( s.endsWith("ASC") ) return "memberCount,asc";
+        }
+        return "publishedDateTime,desc";
     }
 }
